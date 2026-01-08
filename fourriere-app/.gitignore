@@ -1,0 +1,161 @@
+# =========================
+# Backend - Java/Spring Boot
+# =========================
+
+# Compiled class files
+backend/target/
+*.class
+
+# Log files
+*.log
+backend/logs/
+
+# Package files
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Maven
+backend/.mvn/repository/
+backend/.mvn/wrapper/maven-wrapper.jar
+
+# Eclipse
+backend/.settings/
+backend/.classpath
+backend/.project
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# =========================
+# Frontend - Angular/Node
+# =========================
+
+# Dependencies
+frontend/node_modules/
+node_modules/
+
+# Build output
+frontend/dist/
+frontend/.angular/
+
+# Angular cache
+frontend/.angular/cache/
+
+# Test coverage
+frontend/coverage/
+
+# TypeScript
+*.tsbuildinfo
+
+# npm
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+.npm/
+.yarn/
+
+# =========================
+# Environment & Secrets
+# =========================
+
+# Environment files
+.env
+.env.local
+.env.*.local
+*.env
+!.env.example
+
+# Credentials
+credentials.json
+secrets.json
+*.pem
+*.key
+*.crt
+
+# =========================
+# Operating System
+# =========================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# =========================
+# Docker
+# =========================
+
+# Docker volumes data (if stored locally)
+docker-data/
+postgres-data/
+pgadmin-data/
+
+# =========================
+# IDE & Editor
+# =========================
+
+# JetBrains IDEs
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Sublime Text
+*.sublime-workspace
+
+# =========================
+# Misc
+# =========================
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Backup files
+*.bak
+*.backup
+
+# Local configuration
+local.properties
+application-local.yml
+application-local.properties
+
+# Test results
+test-results/
+junit-reports/
+
+# Keycloak exports (if sensitive)
+# keycloak/*.json
+
+# Cloudinary uploads cache
+.cloudinary/

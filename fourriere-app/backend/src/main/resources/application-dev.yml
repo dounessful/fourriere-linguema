@@ -1,0 +1,32 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/fourriere_db
+    username: postgres
+    password:
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+jwt:
+  secret: devSecretKeyForJWTTokenGenerationMustBeAtLeast256BitsLongForHS256Algorithm
+  access-expiration: 900000
+  refresh-expiration: 604800000
+
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:demo}
+  api-key: ${CLOUDINARY_API_KEY:demo}
+  api-secret: ${CLOUDINARY_API_SECRET:demo}
+
+cors:
+  allowed-origins: http://localhost:4201
+
+logging:
+  level:
+    com.fourriere: DEBUG
+    org.springframework.security: DEBUG

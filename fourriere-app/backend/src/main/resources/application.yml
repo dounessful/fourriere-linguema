@@ -1,0 +1,28 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: fourriere-backend
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 25MB
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8180/realms/fourriere
+          jwk-set-uri: http://localhost:8180/realms/fourriere/protocol/openid-connect/certs
+
+server:
+  port: 8085
+  error:
+    include-message: always
+    include-binding-errors: always
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method

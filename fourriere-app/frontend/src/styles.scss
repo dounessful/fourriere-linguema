@@ -1,0 +1,612 @@
+@use '@angular/material' as mat;
+
+// ============================================
+// SENEGALESE-INSPIRED COLOR PALETTE
+// ============================================
+// Primary: Forest Green (inspired by Senegal's nature and flag)
+// Accent: Golden Sun (warmth, prosperity, Sahel sun)
+// Secondary: Terracotta (African earth tones)
+// ============================================
+
+// Custom Senegal Green palette
+$senegal-green: (
+  50: #e8f5e9,
+  100: #c8e6c9,
+  200: #a5d6a7,
+  300: #81c784,
+  400: #66bb6a,
+  500: #00693e,  // Main Senegal flag green
+  600: #005a34,
+  700: #004d2a,
+  800: #003d21,
+  900: #002d18,
+  A100: #69f0ae,
+  A200: #00e676,
+  A400: #00c853,
+  A700: #00693e,
+  contrast: (
+    50: rgba(0, 0, 0, 0.87),
+    100: rgba(0, 0, 0, 0.87),
+    200: rgba(0, 0, 0, 0.87),
+    300: rgba(0, 0, 0, 0.87),
+    400: rgba(0, 0, 0, 0.87),
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+    A100: rgba(0, 0, 0, 0.87),
+    A200: rgba(0, 0, 0, 0.87),
+    A400: rgba(0, 0, 0, 0.87),
+    A700: white,
+  )
+);
+
+// Custom Golden Sun palette
+$golden-sun: (
+  50: #fff8e1,
+  100: #ffecb3,
+  200: #ffe082,
+  300: #ffd54f,
+  400: #ffca28,
+  500: #d4a017,  // Rich gold
+  600: #c49000,
+  700: #b38000,
+  800: #a37000,
+  900: #8d5e00,
+  A100: #ffe57f,
+  A200: #ffd740,
+  A400: #ffc400,
+  A700: #d4a017,
+  contrast: (
+    50: rgba(0, 0, 0, 0.87),
+    100: rgba(0, 0, 0, 0.87),
+    200: rgba(0, 0, 0, 0.87),
+    300: rgba(0, 0, 0, 0.87),
+    400: rgba(0, 0, 0, 0.87),
+    500: rgba(0, 0, 0, 0.87),
+    600: rgba(0, 0, 0, 0.87),
+    700: white,
+    800: white,
+    900: white,
+    A100: rgba(0, 0, 0, 0.87),
+    A200: rgba(0, 0, 0, 0.87),
+    A400: rgba(0, 0, 0, 0.87),
+    A700: rgba(0, 0, 0, 0.87),
+  )
+);
+
+// Custom Terracotta palette for warnings
+$terracotta: (
+  50: #fbe9e7,
+  100: #ffccbc,
+  200: #ffab91,
+  300: #ff8a65,
+  400: #ff7043,
+  500: #c45628,  // Rich terracotta
+  600: #b34a1f,
+  700: #9e3d16,
+  800: #8a310f,
+  900: #6f2205,
+  A100: #ff9e80,
+  A200: #ff6e40,
+  A400: #ff3d00,
+  A700: #c45628,
+  contrast: (
+    50: rgba(0, 0, 0, 0.87),
+    100: rgba(0, 0, 0, 0.87),
+    200: rgba(0, 0, 0, 0.87),
+    300: rgba(0, 0, 0, 0.87),
+    400: rgba(0, 0, 0, 0.87),
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+    A100: rgba(0, 0, 0, 0.87),
+    A200: rgba(0, 0, 0, 0.87),
+    A400: white,
+    A700: white,
+  )
+);
+
+$primary-palette: mat.define-palette($senegal-green);
+$accent-palette: mat.define-palette($golden-sun, 500, 300, 700);
+$warn-palette: mat.define-palette($terracotta);
+
+// Custom typography with modern fonts
+$custom-typography: mat.define-typography-config(
+  $font-family: '"Inter", "Segoe UI", Roboto, sans-serif',
+  $headline-1: mat.define-typography-level(96px, 96px, 300),
+  $headline-2: mat.define-typography-level(60px, 60px, 300),
+  $headline-3: mat.define-typography-level(48px, 50px, 400),
+  $headline-4: mat.define-typography-level(34px, 40px, 400),
+  $headline-5: mat.define-typography-level(24px, 32px, 500),
+  $headline-6: mat.define-typography-level(20px, 32px, 600),
+  $body-1: mat.define-typography-level(16px, 24px, 400),
+  $body-2: mat.define-typography-level(14px, 20px, 400),
+  $subtitle-1: mat.define-typography-level(16px, 28px, 500),
+  $subtitle-2: mat.define-typography-level(14px, 22px, 500),
+  $button: mat.define-typography-level(14px, 14px, 600),
+  $caption: mat.define-typography-level(12px, 20px, 400),
+);
+
+$theme: mat.define-light-theme((
+  color: (
+    primary: $primary-palette,
+    accent: $accent-palette,
+    warn: $warn-palette,
+  ),
+  typography: $custom-typography,
+  density: 0,
+));
+
+@include mat.all-component-themes($theme);
+
+// ============================================
+// CSS CUSTOM PROPERTIES (Design Tokens)
+// ============================================
+:root {
+  // Primary colors
+  --color-primary: #00693e;
+  --color-primary-light: #339966;
+  --color-primary-dark: #004d2a;
+  --color-primary-50: #e8f5e9;
+  --color-primary-100: #c8e6c9;
+
+  // Accent colors (Gold)
+  --color-accent: #d4a017;
+  --color-accent-light: #f5d742;
+  --color-accent-dark: #b38000;
+
+  // Warning/Error colors (Terracotta)
+  --color-warn: #c45628;
+  --color-warn-light: #ff7043;
+
+  // Neutral colors
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #5a5a5a;
+  --color-text-muted: #8a8a8a;
+  --color-background: #fafafa;
+  --color-surface: #ffffff;
+  --color-border: #e0e0e0;
+  --color-border-light: #f0f0f0;
+
+  // Semantic colors
+  --color-success: #2e7d32;
+  --color-info: #0288d1;
+  --color-error: #c45628;
+
+  // Shadows
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1), 0 6px 10px rgba(0, 0, 0, 0.08);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.12), 0 10px 15px rgba(0, 0, 0, 0.08);
+
+  // Border radius
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  // Transitions
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 350ms ease;
+
+  // Spacing
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+}
+
+// ============================================
+// GLOBAL RESET & BASE STYLES
+// ============================================
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// ============================================
+// LAYOUT UTILITIES
+// ============================================
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+
+  @media (max-width: 768px) {
+    padding: 0 var(--space-4);
+  }
+}
+
+.page-content {
+  min-height: calc(100vh - 72px - 80px);
+  padding: var(--space-8) 0;
+}
+
+// ============================================
+// TYPOGRAPHY
+// ============================================
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: 2.5rem;
+  letter-spacing: -0.02em;
+
+  @media (max-width: 768px) {
+    font-size: 1.875rem;
+  }
+}
+
+h2 {
+  font-size: 2rem;
+  letter-spacing: -0.01em;
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+
+  &:hover {
+    color: var(--color-primary-dark);
+  }
+}
+
+// ============================================
+// CARD STYLES (Override Material)
+// ============================================
+.mat-mdc-card {
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-md) !important;
+  border: 1px solid var(--color-border-light);
+  transition: box-shadow var(--transition-base), transform var(--transition-base) !important;
+
+  &:hover {
+    box-shadow: var(--shadow-lg) !important;
+  }
+}
+
+// ============================================
+// BUTTON STYLES (Override Material)
+// ============================================
+.mat-mdc-raised-button,
+.mat-mdc-unelevated-button {
+  border-radius: var(--radius-md) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.02em;
+  padding: 0 var(--space-6) !important;
+  height: 44px !important;
+  transition: all var(--transition-fast) !important;
+
+  &.mat-primary {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%) !important;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 105, 62, 0.35) !important;
+    }
+  }
+
+  &.mat-accent {
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%) !important;
+    color: var(--color-text-primary) !important;
+  }
+}
+
+.mat-mdc-outlined-button {
+  border-radius: var(--radius-md) !important;
+  border-width: 2px !important;
+  font-weight: 600 !important;
+  height: 44px !important;
+}
+
+.mat-mdc-icon-button {
+  transition: background-color var(--transition-fast), transform var(--transition-fast) !important;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+// ============================================
+// FORM FIELD STYLES (Override Material)
+// ============================================
+.mat-mdc-form-field {
+  .mdc-text-field--outlined {
+    border-radius: var(--radius-md) !important;
+  }
+
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing {
+    border-color: var(--color-border) !important;
+  }
+
+  &.mat-focused {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: var(--color-primary) !important;
+      border-width: 2px !important;
+    }
+  }
+}
+
+// ============================================
+// TOOLBAR STYLES
+// ============================================
+.mat-toolbar {
+  &.mat-primary {
+    background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%) !important;
+  }
+}
+
+// ============================================
+// CHIP STYLES
+// ============================================
+.mat-mdc-chip {
+  border-radius: var(--radius-full) !important;
+  font-weight: 500 !important;
+
+  &.mat-primary {
+    background-color: var(--color-primary-50) !important;
+    color: var(--color-primary) !important;
+  }
+
+  &.mat-warn {
+    background-color: #fff3e0 !important;
+    color: var(--color-warn) !important;
+  }
+}
+
+// ============================================
+// TABLE STYLES
+// ============================================
+.mat-mdc-table {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+
+  .mat-mdc-header-row {
+    background-color: var(--color-primary-50);
+
+    .mat-mdc-header-cell {
+      color: var(--color-primary-dark);
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+  }
+
+  .mat-mdc-row {
+    transition: background-color var(--transition-fast);
+
+    &:hover {
+      background-color: rgba(0, 105, 62, 0.04);
+    }
+  }
+}
+
+// ============================================
+// DIALOG STYLES
+// ============================================
+.mat-mdc-dialog-container {
+  .mdc-dialog__surface {
+    border-radius: var(--radius-lg) !important;
+  }
+}
+
+// ============================================
+// SNACKBAR STYLES
+// ============================================
+.mat-mdc-snack-bar-container {
+  border-radius: var(--radius-md) !important;
+}
+
+// ============================================
+// MENU STYLES
+// ============================================
+.mat-mdc-menu-panel {
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+// ============================================
+// UTILITY CLASSES
+// ============================================
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.full-width {
+  width: 100%;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-primary {
+  color: var(--color-primary);
+}
+
+.text-accent {
+  color: var(--color-accent);
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+// Spacing utilities
+.mt-4 { margin-top: var(--space-4); }
+.mt-6 { margin-top: var(--space-6); }
+.mt-8 { margin-top: var(--space-8); }
+.mb-4 { margin-bottom: var(--space-4); }
+.mb-6 { margin-bottom: var(--space-6); }
+.mb-8 { margin-bottom: var(--space-8); }
+
+// ============================================
+// MESSAGE STYLES
+// ============================================
+.error-message {
+  color: var(--color-error);
+  font-size: 0.875rem;
+  margin-top: var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  &::before {
+    content: '⚠';
+  }
+}
+
+.success-message {
+  color: var(--color-success);
+  font-size: 0.875rem;
+  margin-top: var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  &::before {
+    content: '✓';
+  }
+}
+
+// ============================================
+// AD BANNER STYLES
+// ============================================
+.ad-banner {
+  background: linear-gradient(135deg, var(--color-primary-50) 0%, #d4e9df 100%);
+  border: 2px dashed var(--color-primary-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--color-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin: var(--space-4) 0;
+  opacity: 0.8;
+}
+
+// ============================================
+// LEAFLET MAP STYLES
+// ============================================
+.leaflet-container {
+  height: 400px;
+  width: 100%;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+
+  @media (max-width: 768px) {
+    height: 300px;
+  }
+}
+
+// ============================================
+// GRADIENT BACKGROUNDS
+// ============================================
+.gradient-primary {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+}
+
+.gradient-accent {
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
+}
+
+.gradient-hero {
+  background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 50%, var(--color-primary-light) 100%);
+}
+
+// ============================================
+// LOADING ANIMATION
+// ============================================
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+// ============================================
+// FOCUS STYLES (Accessibility)
+// ============================================
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+// ============================================
+// SCROLLBAR STYLES
+// ============================================
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-border-light);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary-light);
+  border-radius: var(--radius-full);
+
+  &:hover {
+    background: var(--color-primary);
+  }
+}
+
+// ============================================
+// SELECTION STYLES
+// ============================================
+::selection {
+  background-color: var(--color-primary);
+  color: white;
+}
