@@ -32,6 +32,9 @@ public interface VehiculeRepository extends JpaRepository<Vehicule, Long> {
 
     long countByRecupere(Boolean recupere);
 
+    @Query("SELECT COUNT(v) FROM Vehicule v WHERE v.recupere = false AND v.fourriere.id = :fourriereId")
+    long countActifsByFourriereId(@Param("fourriereId") Long fourriereId);
+
     @Query("SELECT COUNT(v) FROM Vehicule v WHERE v.recupere = true AND v.dateSortie >= :dateDebut")
     long countRecuperesSince(@Param("dateDebut") LocalDateTime dateDebut);
 }

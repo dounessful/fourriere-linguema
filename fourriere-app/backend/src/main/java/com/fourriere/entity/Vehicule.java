@@ -54,13 +54,6 @@ public class Vehicule {
     @JoinColumn(name = "fourriere_id")
     private Fourriere fourriere;
 
-    // Champs conservés pour rétrocompatibilité (seront dépréciés)
-    @Column(name = "adresse_fourriere")
-    private String adresseFourriere;
-
-    @Column(name = "nom_fourriere", length = 100)
-    private String nomFourriere;
-
     @Column(length = 20)
     private String telephone;
 

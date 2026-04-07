@@ -6,7 +6,8 @@ import { from, switchMap, catchError, of } from 'rxjs';
 // URLs that should NOT have the Bearer token attached
 const EXCLUDED_URLS = [
   '/api/vehicules/recherche',
-  '/api/vehicules/'
+  '/api/vehicules/',
+  '/api/fourrieres/active'
 ];
 
 function isExcludedUrl(url: string): boolean {

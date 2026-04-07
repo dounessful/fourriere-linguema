@@ -71,6 +71,9 @@ services:
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://localhost:8180/realms/fourriere
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: http://keycloak:8080/realms/fourriere/protocol/openid-connect/certs
       CORS_ALLOWED_ORIGINS: http://localhost:4202
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-demo}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-demo}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-demo}
     ports:
       - "8086:8080"
     networks:

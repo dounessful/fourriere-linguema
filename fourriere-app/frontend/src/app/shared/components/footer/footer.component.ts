@@ -7,278 +7,153 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-    <footer class="footer">
-      <div class="footer-wave">
-        <svg viewBox="0 0 1440 100" preserveAspectRatio="none">
-          <path d="M0,40 C150,80 350,0 500,40 C650,80 800,20 960,40 C1120,60 1280,10 1440,40 L1440,100 L0,100 Z" fill="currentColor"/>
-        </svg>
+    <footer class="ft">
+      <div class="ft-top">
+        <a routerLink="/" class="ft-brand">
+          <span class="ft-mark">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/>
+              <circle cx="6.5" cy="16.5" r="2.5"/>
+              <circle cx="16.5" cy="16.5" r="2.5"/>
+            </svg>
+          </span>
+          <span class="ft-name">Linguema</span>
+        </a>
+
+        <nav class="ft-nav">
+          <a routerLink="/">Recherche</a>
+          <span class="dot">·</span>
+          <a href="#" (click)="$event.preventDefault()">Aide</a>
+          <span class="dot">·</span>
+          <a href="#" (click)="$event.preventDefault()">FAQ</a>
+          <span class="dot">·</span>
+          <a href="#" (click)="$event.preventDefault()">Mentions légales</a>
+          <span class="dot">·</span>
+          <a href="#" (click)="$event.preventDefault()">Confidentialité</a>
+        </nav>
+
+        <a class="ft-tel" href="tel:+221338000012" aria-label="Appeler le numéro d'aide">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+          +221 33 800 00 12
+        </a>
       </div>
 
-      <div class="footer-content">
-        <div class="container">
-          <div class="footer-grid">
-            <div class="footer-brand">
-              <div class="brand-logo">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5H6.5C5.84 5 5.29 5.42 5.08 6.01L3 12V20C3 20.55 3.45 21 4 21H5C5.55 21 6 20.55 6 20V19H18V20C18 20.55 18.45 21 19 21H20C20.55 21 21 20.55 21 20V12L18.92 6.01Z" fill="currentColor"/>
-                  <circle cx="7.5" cy="15.5" r="1.5" fill="var(--color-accent)"/>
-                  <circle cx="16.5" cy="15.5" r="1.5" fill="var(--color-accent)"/>
-                </svg>
-                <span>Fourriere Sénégal</span>
-              </div>
-              <p class="brand-description">
-                Service de recherche de véhicules en fourrière au Sénégal.
-                Retrouvez rapidement votre véhicule et les informations nécessaires pour le récupérer.
-              </p>
-            </div>
-
-            <div class="footer-links">
-              <h4>Liens utiles</h4>
-              <ul>
-                <li><a routerLink="/">Rechercher un véhicule</a></li>
-                <li><a href="#">FAQ</a></li>
-                <li><a href="#">Guide de récupération</a></li>
-              </ul>
-            </div>
-
-            <div class="footer-links">
-              <h4>Légal</h4>
-              <ul>
-                <li><a href="#">Mentions légales</a></li>
-                <li><a href="#">Politique de confidentialité</a></li>
-                <li><a href="#">Conditions d'utilisation</a></li>
-              </ul>
-            </div>
-
-            <div class="footer-contact">
-              <h4>Contact</h4>
-              <div class="contact-item">
-                <svg viewBox="0 0 24 24" width="18" height="18">
-                  <path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                </svg>
-                <span>Dakar, Sénégal</span>
-              </div>
-              <div class="contact-item">
-                <svg viewBox="0 0 24 24" width="18" height="18">
-                  <path fill="currentColor" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-                </svg>
-                <a href="mailto:contact@fourriere.sn">contact&#64;fourriere.sn</a>
-              </div>
-            </div>
-          </div>
-
-          <div class="footer-bottom">
-            <div class="copyright">
-              <span>&copy; {{ currentYear }} Fourrière Sénégal. Tous droits réservés.</span>
-            </div>
-            <div class="footer-flag">
-              <div class="flag-stripe green"></div>
-              <div class="flag-stripe gold">
-                <svg viewBox="0 0 24 24" width="12" height="12">
-                  <path fill="currentColor" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                </svg>
-              </div>
-              <div class="flag-stripe red"></div>
-            </div>
-          </div>
-        </div>
+      <div class="ft-bot">
+        <span>© {{ year }} Linguema</span>
+        <span class="ft-loc">Dakar · Sénégal</span>
       </div>
     </footer>
   `,
   styles: [`
-    .footer {
-      margin-top: auto;
-      position: relative;
+    .ft {
+      border-top: 1px solid var(--border);
+      background: linear-gradient(180deg, var(--bg) 0%, #ffffff 100%);
+      margin-top: var(--s-12);
     }
 
-    .footer-wave {
-      height: 50px;
-      overflow: hidden;
-      color: var(--color-primary-dark);
+    .ft-top {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: var(--s-6) var(--s-6);
+      display: flex;
+      align-items: center;
+      gap: var(--s-6);
+      flex-wrap: wrap;
 
-      svg {
-        width: 100%;
-        height: 100%;
-        display: block;
-      }
-    }
-
-    .footer-content {
-      background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
-      color: white;
-      padding: var(--space-10) 0 var(--space-6);
-    }
-
-    .footer-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr 1fr 1.5fr;
-      gap: var(--space-8);
-      margin-bottom: var(--space-8);
-
-      @media (max-width: 900px) {
-        grid-template-columns: 1fr 1fr;
-        gap: var(--space-6);
-      }
-
-      @media (max-width: 600px) {
-        grid-template-columns: 1fr;
-        text-align: center;
+      @media (max-width: 760px) {
+        padding: var(--s-5) var(--s-4);
+        gap: var(--s-4);
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
 
-    .footer-brand {
-      .brand-logo {
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-        margin-bottom: var(--space-4);
-
-        @media (max-width: 600px) {
-          justify-content: center;
-        }
-
-        svg {
-          width: 36px;
-          height: 36px;
-          color: white;
-        }
-
-        span {
-          font-size: 1.25rem;
-          font-weight: 700;
-        }
-      }
-
-      .brand-description {
-        color: rgba(255, 255, 255, 0.8);
-        font-size: 0.9rem;
-        line-height: 1.7;
-        max-width: 320px;
-
-        @media (max-width: 600px) {
-          max-width: none;
-        }
-      }
+    .ft-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--s-2);
+      color: var(--text);
+      &:hover { color: var(--text); }
+    }
+    .ft-mark {
+      width: 28px; height: 28px;
+      border-radius: 7px;
+      background: var(--brand);
+      color: #fff;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .ft-name {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
     }
 
-    .footer-links {
-      h4 {
-        color: var(--color-accent);
-        font-size: 0.9rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: var(--space-4);
-      }
-
-      ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-      }
-
-      li {
-        margin-bottom: var(--space-3);
-      }
+    .ft-nav {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--s-3);
+      flex: 1;
+      justify-content: center;
+      font-size: 13px;
+      color: var(--text-muted);
 
       a {
-        color: rgba(255, 255, 255, 0.8);
-        text-decoration: none;
-        font-size: 0.9rem;
-        transition: color var(--transition-fast);
+        color: var(--text-muted);
+        transition: color var(--t-fast);
+        &:hover { color: var(--brand); }
+      }
 
-        &:hover {
-          color: white;
-        }
+      .dot { color: var(--text-faint); user-select: none; }
+
+      @media (max-width: 760px) {
+        justify-content: flex-start;
+        gap: var(--s-2);
       }
     }
 
-    .footer-contact {
-      h4 {
-        color: var(--color-accent);
-        font-size: 0.9rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: var(--space-4);
+    .ft-tel {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--surface);
+      color: var(--brand-dark);
+      border: 1px solid var(--brand-soft-2);
+      border-radius: var(--r-pill);
+      font-size: 12px;
+      font-weight: 600;
+      transition: all var(--t-fast);
+
+      &:hover {
+        background: var(--brand-soft);
+        color: var(--brand-dark);
       }
 
-      .contact-item {
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-        margin-bottom: var(--space-3);
-        color: rgba(255, 255, 255, 0.8);
-        font-size: 0.9rem;
-
-        @media (max-width: 600px) {
-          justify-content: center;
-        }
-
-        svg {
-          flex-shrink: 0;
-          opacity: 0.9;
-        }
-
-        a {
-          color: rgba(255, 255, 255, 0.8);
-          text-decoration: none;
-          transition: color var(--transition-fast);
-
-          &:hover {
-            color: white;
-          }
-        }
-      }
+      svg { color: var(--brand); }
     }
 
-    .footer-bottom {
+    .ft-bot {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: var(--s-3) var(--s-6);
+      border-top: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-top: var(--space-6);
-      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      font-size: 11px;
+      color: var(--text-faint);
 
       @media (max-width: 600px) {
-        flex-direction: column;
-        gap: var(--space-4);
+        padding: var(--s-3) var(--s-4);
       }
     }
 
-    .copyright {
-      color: rgba(255, 255, 255, 0.7);
-      font-size: 0.85rem;
-    }
-
-    .footer-flag {
-      display: flex;
-      height: 24px;
-      border-radius: 4px;
-      overflow: hidden;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-
-      .flag-stripe {
-        width: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        &.green {
-          background-color: #00693e;
-        }
-
-        &.gold {
-          background-color: #fcd116;
-          color: #00693e;
-        }
-
-        &.red {
-          background-color: #e31b23;
-        }
-      }
-    }
+    .ft-loc { letter-spacing: 0.02em; }
   `]
 })
 export class FooterComponent {
-  currentYear = new Date().getFullYear();
+  year = new Date().getFullYear();
 }

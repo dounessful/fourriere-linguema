@@ -21,6 +21,7 @@ import { Vehicule, Stats } from '../../../core/models/vehicule.model';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import { DateFrPipe } from '../../../shared/pipes/date-fr.pipe';
 import { ConfirmDialogComponent } from './confirm-dialog.component';
+import { TransfertDialogComponent } from '../transferts/transfert-dialog.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -229,6 +230,10 @@ import { ConfirmDialogComponent } from './confirm-dialog.component';
                             <button mat-menu-item (click)="marquerSortie(v)">
                               <mat-icon class="success-icon">check_circle</mat-icon>
                               <span>Marquer comme récupéré</span>
+                            </button>
+                            <button mat-menu-item (click)="transferer(v)">
+                              <mat-icon>swap_horiz</mat-icon>
+                              <span>Transférer vers une autre fourrière</span>
                             </button>
                           }
                           <button mat-menu-item (click)="deleteVehicule(v)" class="delete-action">
@@ -700,6 +705,22 @@ export class DashboardComponent implements OnInit {
             this.snackBar.open('Erreur lors de la mise à jour', 'OK', { duration: 3000 });
           }
         });
+      }
+    });
+  }
+
+  transferer(vehicule: Vehicule): void {
+    const ref = this.dialog.open(TransfertDialogComponent, {
+      data: { vehicule },
+      width: '520px'
+    });
+    ref.afterClosed().subscribe(result => {
+      if (result) {
+        const msg = result.depassementCapacite
+          ? 'Transfert effectué (avertissement : capacité de la destination dépassée)'
+          : 'Transfert effectué';
+        this.snackBar.open(msg, 'OK', { duration: 4000 });
+        this.loadVehicules();
       }
     });
   }

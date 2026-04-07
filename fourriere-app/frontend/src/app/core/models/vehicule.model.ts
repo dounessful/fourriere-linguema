@@ -25,6 +25,9 @@ export interface Vehicule {
   updatedAt: string;
   joursEnFourriere: number;
   coutEstime: number;
+  transfere?: boolean;
+  derniereDateTransfert?: string | null;
+  derniereFourriereSourceNom?: string | null;
 }
 
 export enum MotifEnlevement {

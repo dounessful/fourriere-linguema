@@ -9,9 +9,9 @@ import { FooterComponent } from './shared/components/footer/footer.component';
   imports: [RouterOutlet, HeaderComponent, FooterComponent],
   template: `
     <app-header></app-header>
-    <main class="page-content">
+    <div class="app-main">
       <router-outlet></router-outlet>
-    </main>
+    </div>
     <app-footer></app-footer>
   `,
   styles: [`
@@ -20,8 +20,10 @@ import { FooterComponent } from './shared/components/footer/footer.component';
       flex-direction: column;
       min-height: 100vh;
     }
-    main {
+    .app-main {
       flex: 1;
+      display: flex;
+      flex-direction: column;
     }
   `]
 })

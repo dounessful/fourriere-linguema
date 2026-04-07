@@ -1,612 +1,382 @@
 @use '@angular/material' as mat;
 
-// ============================================
-// SENEGALESE-INSPIRED COLOR PALETTE
-// ============================================
-// Primary: Forest Green (inspired by Senegal's nature and flag)
-// Accent: Golden Sun (warmth, prosperity, Sahel sun)
-// Secondary: Terracotta (African earth tones)
-// ============================================
+// =============================================================================
+// LINGUEMA — design system
+// Editorial utility: restraint, typography-led, generous whitespace.
+// =============================================================================
 
-// Custom Senegal Green palette
-$senegal-green: (
-  50: #e8f5e9,
-  100: #c8e6c9,
-  200: #a5d6a7,
-  300: #81c784,
-  400: #66bb6a,
-  500: #00693e,  // Main Senegal flag green
-  600: #005a34,
-  700: #004d2a,
-  800: #003d21,
-  900: #002d18,
-  A100: #69f0ae,
-  A200: #00e676,
-  A400: #00c853,
-  A700: #00693e,
+// ---------- Material palettes (kept minimal — we override most surfaces) -----
+$brand: (
+  50:  #ecfdf5,
+  100: #d1fae5,
+  200: #a7f3d0,
+  300: #6ee7b7,
+  400: #34d399,
+  500: #15803d,
+  600: #166534,
+  700: #14532d,
+  800: #14532d,
+  900: #052e16,
+  A100: #d1fae5,
+  A200: #6ee7b7,
+  A400: #15803d,
+  A700: #14532d,
   contrast: (
-    50: rgba(0, 0, 0, 0.87),
-    100: rgba(0, 0, 0, 0.87),
-    200: rgba(0, 0, 0, 0.87),
-    300: rgba(0, 0, 0, 0.87),
-    400: rgba(0, 0, 0, 0.87),
-    500: white,
-    600: white,
-    700: white,
-    800: white,
-    900: white,
-    A100: rgba(0, 0, 0, 0.87),
-    A200: rgba(0, 0, 0, 0.87),
-    A400: rgba(0, 0, 0, 0.87),
-    A700: white,
+    50: #1c1917, 100: #1c1917, 200: #1c1917, 300: #1c1917, 400: #1c1917,
+    500: #ffffff, 600: #ffffff, 700: #ffffff, 800: #ffffff, 900: #ffffff,
+    A100: #1c1917, A200: #1c1917, A400: #ffffff, A700: #ffffff,
   )
 );
 
-// Custom Golden Sun palette
-$golden-sun: (
-  50: #fff8e1,
-  100: #ffecb3,
-  200: #ffe082,
-  300: #ffd54f,
-  400: #ffca28,
-  500: #d4a017,  // Rich gold
-  600: #c49000,
-  700: #b38000,
-  800: #a37000,
-  900: #8d5e00,
-  A100: #ffe57f,
-  A200: #ffd740,
-  A400: #ffc400,
-  A700: #d4a017,
+$gold: (
+  50:  #fffbeb, 100: #fef3c7, 200: #fde68a, 300: #fcd34d, 400: #fbbf24,
+  500: #b45309, 600: #92400e, 700: #78350f, 800: #78350f, 900: #451a03,
+  A100: #fde68a, A200: #fcd34d, A400: #b45309, A700: #78350f,
   contrast: (
-    50: rgba(0, 0, 0, 0.87),
-    100: rgba(0, 0, 0, 0.87),
-    200: rgba(0, 0, 0, 0.87),
-    300: rgba(0, 0, 0, 0.87),
-    400: rgba(0, 0, 0, 0.87),
-    500: rgba(0, 0, 0, 0.87),
-    600: rgba(0, 0, 0, 0.87),
-    700: white,
-    800: white,
-    900: white,
-    A100: rgba(0, 0, 0, 0.87),
-    A200: rgba(0, 0, 0, 0.87),
-    A400: rgba(0, 0, 0, 0.87),
-    A700: rgba(0, 0, 0, 0.87),
+    50: #1c1917, 100: #1c1917, 200: #1c1917, 300: #1c1917, 400: #1c1917,
+    500: #ffffff, 600: #ffffff, 700: #ffffff, 800: #ffffff, 900: #ffffff,
+    A100: #1c1917, A200: #1c1917, A400: #ffffff, A700: #ffffff,
   )
 );
 
-// Custom Terracotta palette for warnings
-$terracotta: (
-  50: #fbe9e7,
-  100: #ffccbc,
-  200: #ffab91,
-  300: #ff8a65,
-  400: #ff7043,
-  500: #c45628,  // Rich terracotta
-  600: #b34a1f,
-  700: #9e3d16,
-  800: #8a310f,
-  900: #6f2205,
-  A100: #ff9e80,
-  A200: #ff6e40,
-  A400: #ff3d00,
-  A700: #c45628,
+$danger: (
+  50: #fef2f2, 100: #fee2e2, 200: #fecaca, 300: #fca5a5, 400: #f87171,
+  500: #b91c1c, 600: #991b1b, 700: #7f1d1d, 800: #7f1d1d, 900: #450a0a,
+  A100: #fee2e2, A200: #fca5a5, A400: #b91c1c, A700: #7f1d1d,
   contrast: (
-    50: rgba(0, 0, 0, 0.87),
-    100: rgba(0, 0, 0, 0.87),
-    200: rgba(0, 0, 0, 0.87),
-    300: rgba(0, 0, 0, 0.87),
-    400: rgba(0, 0, 0, 0.87),
-    500: white,
-    600: white,
-    700: white,
-    800: white,
-    900: white,
-    A100: rgba(0, 0, 0, 0.87),
-    A200: rgba(0, 0, 0, 0.87),
-    A400: white,
-    A700: white,
+    50: #1c1917, 100: #1c1917, 200: #1c1917, 300: #1c1917, 400: #ffffff,
+    500: #ffffff, 600: #ffffff, 700: #ffffff, 800: #ffffff, 900: #ffffff,
+    A100: #1c1917, A200: #1c1917, A400: #ffffff, A700: #ffffff,
   )
 );
 
-$primary-palette: mat.define-palette($senegal-green);
-$accent-palette: mat.define-palette($golden-sun, 500, 300, 700);
-$warn-palette: mat.define-palette($terracotta);
+$primary-palette: mat.define-palette($brand);
+$accent-palette:  mat.define-palette($gold, 500, 300, 700);
+$warn-palette:    mat.define-palette($danger);
 
-// Custom typography with modern fonts
-$custom-typography: mat.define-typography-config(
-  $font-family: '"Inter", "Segoe UI", Roboto, sans-serif',
-  $headline-1: mat.define-typography-level(96px, 96px, 300),
-  $headline-2: mat.define-typography-level(60px, 60px, 300),
-  $headline-3: mat.define-typography-level(48px, 50px, 400),
-  $headline-4: mat.define-typography-level(34px, 40px, 400),
-  $headline-5: mat.define-typography-level(24px, 32px, 500),
-  $headline-6: mat.define-typography-level(20px, 32px, 600),
-  $body-1: mat.define-typography-level(16px, 24px, 400),
-  $body-2: mat.define-typography-level(14px, 20px, 400),
-  $subtitle-1: mat.define-typography-level(16px, 28px, 500),
-  $subtitle-2: mat.define-typography-level(14px, 22px, 500),
-  $button: mat.define-typography-level(14px, 14px, 600),
-  $caption: mat.define-typography-level(12px, 20px, 400),
+$typography: mat.define-typography-config(
+  $font-family: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
 );
 
 $theme: mat.define-light-theme((
-  color: (
-    primary: $primary-palette,
-    accent: $accent-palette,
-    warn: $warn-palette,
-  ),
-  typography: $custom-typography,
-  density: 0,
+  color: (primary: $primary-palette, accent: $accent-palette, warn: $warn-palette),
+  typography: $typography,
+  density: -1,
 ));
 
 @include mat.all-component-themes($theme);
 
-// ============================================
-// CSS CUSTOM PROPERTIES (Design Tokens)
-// ============================================
+// ---------- Design tokens ----------------------------------------------------
 :root {
-  // Primary colors
-  --color-primary: #00693e;
-  --color-primary-light: #339966;
-  --color-primary-dark: #004d2a;
-  --color-primary-50: #e8f5e9;
-  --color-primary-100: #c8e6c9;
+  // Surfaces — vert très pâle / blanc
+  --bg:           #f6fbf8;   /* mix vert-blanc subtil */
+  --bg-subtle:    #ecf6f0;
+  --surface:      #ffffff;
+  --surface-2:    #f6fbf8;
 
-  // Accent colors (Gold)
-  --color-accent: #d4a017;
-  --color-accent-light: #f5d742;
-  --color-accent-dark: #b38000;
+  // Borders
+  --border:       #e7e5e4;
+  --border-strong:#d6d3d1;
 
-  // Warning/Error colors (Terracotta)
-  --color-warn: #c45628;
-  --color-warn-light: #ff7043;
+  // Text (warm near-black)
+  --text:         #1c1917;
+  --text-2:       #44403c;
+  --text-muted:   #78716c;
+  --text-faint:   #a8a29e;
 
-  // Neutral colors
-  --color-text-primary: #1a1a1a;
-  --color-text-secondary: #5a5a5a;
-  --color-text-muted: #8a8a8a;
-  --color-background: #fafafa;
-  --color-surface: #ffffff;
-  --color-border: #e0e0e0;
-  --color-border-light: #f0f0f0;
+  // Brand (deep emerald)
+  --brand:        #15803d;
+  --brand-hover:  #166534;
+  --brand-dark:   #14532d;
+  --brand-soft:   #ecfdf5;
+  --brand-soft-2: #d1fae5;
 
-  // Semantic colors
-  --color-success: #2e7d32;
-  --color-info: #0288d1;
-  --color-error: #c45628;
+  // Accents (used very sparingly)
+  --gold:         #b45309;
+  --gold-soft:    #fef3c7;
 
-  // Shadows
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1), 0 6px 10px rgba(0, 0, 0, 0.08);
-  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.12), 0 10px 15px rgba(0, 0, 0, 0.08);
+  // Semantic
+  --danger:       #b91c1c;
+  --danger-soft:  #fef2f2;
+  --info:         #1d4ed8;
+  --info-soft:    #eff6ff;
 
-  // Border radius
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-  --radius-full: 9999px;
+  // Radii
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-pill: 999px;
 
-  // Transitions
-  --transition-fast: 150ms ease;
-  --transition-base: 250ms ease;
-  --transition-slow: 350ms ease;
+  // Shadows (subtle, mostly avoided in favor of 1px borders)
+  --shadow-1: 0 1px 2px rgba(28, 25, 23, 0.04);
+  --shadow-2: 0 4px 12px rgba(28, 25, 23, 0.06), 0 1px 3px rgba(28, 25, 23, 0.04);
+  --shadow-3: 0 12px 32px rgba(28, 25, 23, 0.08), 0 2px 6px rgba(28, 25, 23, 0.04);
 
-  // Spacing
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-8: 32px;
-  --space-10: 40px;
-  --space-12: 48px;
-  --space-16: 64px;
+  // Motion
+  --t-fast: 120ms cubic-bezier(0.4, 0, 0.2, 1);
+  --t-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  // Spacing scale (4px base)
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10: 40px;
+  --s-12: 48px;
+  --s-16: 64px;
+  --s-20: 80px;
+
+  // Layout
+  --content-max: 1120px;
+  --content-narrow: 720px;
+  --header-h: 64px;
 }
 
-// ============================================
-// GLOBAL RESET & BASE STYLES
-// ============================================
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+// ---------- Reset & base -----------------------------------------------------
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 
-html {
-  scroll-behavior: smooth;
-}
-
-html, body {
-  height: 100%;
-  font-family: 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-  background-color: var(--color-background);
-  color: var(--color-text-primary);
-  line-height: 1.6;
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'cv11', 'ss01', 'ss03';
 }
 
-// ============================================
-// LAYOUT UTILITIES
-// ============================================
-.container {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 var(--space-6);
-
-  @media (max-width: 768px) {
-    padding: 0 var(--space-4);
-  }
-}
-
-.page-content {
-  min-height: calc(100vh - 72px - 80px);
-  padding: var(--space-8) 0;
-}
-
-// ============================================
-// TYPOGRAPHY
-// ============================================
 h1, h2, h3, h4, h5, h6 {
-  color: var(--color-text-primary);
+  margin: 0;
   font-weight: 600;
-  line-height: 1.3;
+  color: var(--text);
+  letter-spacing: -0.011em;
+  line-height: 1.25;
 }
 
-h1 {
-  font-size: 2.5rem;
-  letter-spacing: -0.02em;
+h1 { font-size: 28px; letter-spacing: -0.018em; }
+h2 { font-size: 20px; }
+h3 { font-size: 16px; }
+h4 { font-size: 14px; }
 
-  @media (max-width: 768px) {
-    font-size: 1.875rem;
-  }
-}
-
-h2 {
-  font-size: 2rem;
-  letter-spacing: -0.01em;
-
-  @media (max-width: 768px) {
-    font-size: 1.5rem;
-  }
-}
-
-h3 {
-  font-size: 1.5rem;
-}
+p { margin: 0; }
 
 a {
-  color: var(--color-primary);
+  color: var(--brand);
   text-decoration: none;
-  transition: color var(--transition-fast);
-
-  &:hover {
-    color: var(--color-primary-dark);
-  }
+  transition: color var(--t-fast);
+  &:hover { color: var(--brand-dark); }
 }
 
-// ============================================
-// CARD STYLES (Override Material)
-// ============================================
+button { font: inherit; cursor: pointer; }
+
+::selection { background: var(--brand-soft-2); color: var(--brand-dark); }
+
+// ---------- Layout primitives ------------------------------------------------
+.container {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 0 var(--s-6);
+  @media (max-width: 768px) { padding: 0 var(--s-4); }
+}
+
+.container-narrow {
+  max-width: var(--content-narrow);
+  margin: 0 auto;
+  padding: 0 var(--s-6);
+  @media (max-width: 768px) { padding: 0 var(--s-4); }
+}
+
+// ---------- Material overrides (minimal, just to fit the system) ------------
 .mat-mdc-card {
-  border-radius: var(--radius-lg) !important;
-  box-shadow: var(--shadow-md) !important;
-  border: 1px solid var(--color-border-light);
-  transition: box-shadow var(--transition-base), transform var(--transition-base) !important;
-
-  &:hover {
-    box-shadow: var(--shadow-lg) !important;
-  }
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-lg) !important;
+  box-shadow: none !important;
+  transition: border-color var(--t-fast);
 }
 
-// ============================================
-// BUTTON STYLES (Override Material)
-// ============================================
 .mat-mdc-raised-button,
 .mat-mdc-unelevated-button {
-  border-radius: var(--radius-md) !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.02em;
-  padding: 0 var(--space-6) !important;
-  height: 44px !important;
-  transition: all var(--transition-fast) !important;
+  border-radius: var(--r-md) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+  height: 40px !important;
+  padding: 0 var(--s-4) !important;
+  box-shadow: none !important;
+  text-transform: none !important;
 
   &.mat-primary {
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%) !important;
-
-    &:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 105, 62, 0.35) !important;
-    }
-  }
-
-  &.mat-accent {
-    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%) !important;
-    color: var(--color-text-primary) !important;
+    background: var(--brand) !important;
+    color: #fff !important;
+    &:hover { background: var(--brand-hover) !important; }
   }
 }
 
 .mat-mdc-outlined-button {
-  border-radius: var(--radius-md) !important;
-  border-width: 2px !important;
-  font-weight: 600 !important;
-  height: 44px !important;
+  border-radius: var(--r-md) !important;
+  border: 1px solid var(--border-strong) !important;
+  height: 40px !important;
+  padding: 0 var(--s-4) !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  color: var(--text) !important;
+  background: var(--surface) !important;
+  &:hover { background: var(--bg-subtle) !important; }
 }
 
-.mat-mdc-icon-button {
-  transition: background-color var(--transition-fast), transform var(--transition-fast) !important;
-
-  &:hover {
-    transform: scale(1.05);
-  }
+.mat-mdc-button {
+  border-radius: var(--r-md) !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
 }
 
-// ============================================
-// FORM FIELD STYLES (Override Material)
-// ============================================
+// Form fields — outlined, calm
 .mat-mdc-form-field {
   .mdc-text-field--outlined {
-    border-radius: var(--radius-md) !important;
+    --mdc-outlined-text-field-container-shape: var(--r-md);
+    background: var(--surface);
   }
-
   .mdc-notched-outline__leading,
   .mdc-notched-outline__notch,
   .mdc-notched-outline__trailing {
-    border-color: var(--color-border) !important;
+    border-color: var(--border) !important;
   }
-
   &.mat-focused {
     .mdc-notched-outline__leading,
     .mdc-notched-outline__notch,
     .mdc-notched-outline__trailing {
-      border-color: var(--color-primary) !important;
-      border-width: 2px !important;
+      border-color: var(--brand) !important;
+      border-width: 1.5px !important;
     }
   }
 }
 
-// ============================================
-// TOOLBAR STYLES
-// ============================================
-.mat-toolbar {
-  &.mat-primary {
-    background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%) !important;
-  }
-}
-
-// ============================================
-// CHIP STYLES
-// ============================================
-.mat-mdc-chip {
-  border-radius: var(--radius-full) !important;
-  font-weight: 500 !important;
-
-  &.mat-primary {
-    background-color: var(--color-primary-50) !important;
-    color: var(--color-primary) !important;
-  }
-
-  &.mat-warn {
-    background-color: #fff3e0 !important;
-    color: var(--color-warn) !important;
-  }
-}
-
-// ============================================
-// TABLE STYLES
-// ============================================
+// Tables — editorial, no zebra, no shadow, no rounded corners on rows
 .mat-mdc-table {
-  border-radius: var(--radius-md);
-  overflow: hidden;
-
+  background: var(--surface);
   .mat-mdc-header-row {
-    background-color: var(--color-primary-50);
-
+    background: transparent;
+    border-bottom: 1px solid var(--border);
     .mat-mdc-header-cell {
-      color: var(--color-primary-dark);
-      font-weight: 600;
-      font-size: 0.875rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
     }
   }
-
   .mat-mdc-row {
-    transition: background-color var(--transition-fast);
-
-    &:hover {
-      background-color: rgba(0, 105, 62, 0.04);
-    }
+    border-bottom: 1px solid var(--border);
+    transition: background var(--t-fast);
+    &:hover { background: var(--bg-subtle); }
+    &:last-child { border-bottom: 0; }
   }
+  .mat-mdc-cell { color: var(--text); font-size: 14px; }
 }
 
-// ============================================
-// DIALOG STYLES
-// ============================================
-.mat-mdc-dialog-container {
-  .mdc-dialog__surface {
-    border-radius: var(--radius-lg) !important;
-  }
+.mat-mdc-paginator {
+  background: transparent;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
 }
 
-// ============================================
-// SNACKBAR STYLES
-// ============================================
-.mat-mdc-snack-bar-container {
-  border-radius: var(--radius-md) !important;
+// Dialogs
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  border-radius: var(--r-lg) !important;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-3) !important;
 }
 
-// ============================================
-// MENU STYLES
-// ============================================
+// Menus
 .mat-mdc-menu-panel {
-  border-radius: var(--radius-md) !important;
-  box-shadow: var(--shadow-lg) !important;
+  border-radius: var(--r-md) !important;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-2) !important;
 }
 
-// ============================================
-// UTILITY CLASSES
-// ============================================
-.card-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-4);
+// Snackbar
+.mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-shape: var(--r-md);
 }
 
-.full-width {
-  width: 100%;
+// Chips — quiet
+.mat-mdc-chip {
+  border-radius: var(--r-pill) !important;
+  font-weight: 500 !important;
+  background: var(--bg-subtle) !important;
+  color: var(--text-2) !important;
+  border: 1px solid var(--border) !important;
 }
 
-.text-center {
-  text-align: center;
-}
-
-.text-primary {
-  color: var(--color-primary);
-}
-
-.text-accent {
-  color: var(--color-accent);
-}
-
-.text-muted {
-  color: var(--color-text-muted);
-}
-
-// Spacing utilities
-.mt-4 { margin-top: var(--space-4); }
-.mt-6 { margin-top: var(--space-6); }
-.mt-8 { margin-top: var(--space-8); }
-.mb-4 { margin-bottom: var(--space-4); }
-.mb-6 { margin-bottom: var(--space-6); }
-.mb-8 { margin-bottom: var(--space-8); }
-
-// ============================================
-// MESSAGE STYLES
-// ============================================
-.error-message {
-  color: var(--color-error);
-  font-size: 0.875rem;
-  margin-top: var(--space-2);
-  display: flex;
+// ---------- Reusable utility components -------------------------------------
+// Subtle pill / status tags
+.tag {
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
-
-  &::before {
-    content: '⚠';
-  }
-}
-
-.success-message {
-  color: var(--color-success);
-  font-size: 0.875rem;
-  margin-top: var(--space-2);
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-
-  &::before {
-    content: '✓';
-  }
-}
-
-// ============================================
-// AD BANNER STYLES
-// ============================================
-.ad-banner {
-  background: linear-gradient(135deg, var(--color-primary-50) 0%, #d4e9df 100%);
-  border: 2px dashed var(--color-primary-light);
-  border-radius: var(--radius-lg);
-  padding: var(--space-8);
-  text-align: center;
-  color: var(--color-primary);
-  font-size: 0.875rem;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: var(--r-pill);
+  font-size: 12px;
   font-weight: 500;
-  margin: var(--space-4) 0;
-  opacity: 0.8;
-}
+  border: 1px solid transparent;
+  white-space: nowrap;
 
-// ============================================
-// LEAFLET MAP STYLES
-// ============================================
-.leaflet-container {
-  height: 400px;
-  width: 100%;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-
-  @media (max-width: 768px) {
-    height: 300px;
+  mat-icon {
+    font-size: 14px !important;
+    width: 14px !important;
+    height: 14px !important;
   }
+
+  &.tag-neutral { background: var(--bg-subtle); color: var(--text-2); border-color: var(--border); }
+  &.tag-brand   { background: var(--brand-soft); color: var(--brand-dark); border-color: var(--brand-soft-2); }
+  &.tag-warn    { background: var(--gold-soft); color: var(--gold); border-color: #fde68a; }
+  &.tag-danger  { background: var(--danger-soft); color: var(--danger); border-color: #fecaca; }
+  &.tag-info    { background: var(--info-soft); color: var(--info); border-color: #dbeafe; }
 }
 
-// ============================================
-// GRADIENT BACKGROUNDS
-// ============================================
-.gradient-primary {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+.eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
-.gradient-accent {
-  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
-}
-
-.gradient-hero {
-  background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 50%, var(--color-primary-light) 100%);
-}
-
-// ============================================
-// LOADING ANIMATION
-// ============================================
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-  border-radius: var(--radius-sm);
-}
-
-// ============================================
-// FOCUS STYLES (Accessibility)
-// ============================================
+// Focus
 :focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid var(--brand);
   outline-offset: 2px;
+  border-radius: var(--r-sm);
 }
 
-// ============================================
-// SCROLLBAR STYLES
-// ============================================
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+// Scrollbar
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: var(--r-pill); border: 2px solid var(--bg); }
+::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
+
+// Leaflet map
+.leaflet-container {
+  width: 100%;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
 }
 
-::-webkit-scrollbar-track {
-  background: var(--color-border-light);
-  border-radius: var(--radius-full);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-primary-light);
-  border-radius: var(--radius-full);
-
-  &:hover {
-    background: var(--color-primary);
-  }
-}
-
-// ============================================
-// SELECTION STYLES
-// ============================================
-::selection {
-  background-color: var(--color-primary);
-  color: white;
-}
+// Helpers
+.text-center { text-align: center; }
+.text-muted  { color: var(--text-muted); }
+.full-width  { width: 100%; }
+.mb-4 { margin-bottom: var(--s-4); }
+.mb-6 { margin-bottom: var(--s-6); }
+.mb-8 { margin-bottom: var(--s-8); }
+.mt-4 { margin-top: var(--s-4); }
+.mt-6 { margin-top: var(--s-6); }
+.mt-8 { margin-top: var(--s-8); }

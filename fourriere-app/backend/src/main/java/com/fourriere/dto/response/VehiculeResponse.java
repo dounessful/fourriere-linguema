@@ -46,4 +46,9 @@ public class VehiculeResponse {
     private LocalDateTime updatedAt;
     private Long joursEnFourriere;
     private BigDecimal coutEstime;
+
+    // Traçabilité transferts
+    private Boolean transfere;
+    private LocalDateTime derniereDateTransfert;
+    private String derniereFourriereSourceNom;
 }

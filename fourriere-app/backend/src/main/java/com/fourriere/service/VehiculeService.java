@@ -8,7 +8,9 @@ import com.fourriere.entity.Fourriere;
 import com.fourriere.entity.Vehicule;
 import com.fourriere.exception.DuplicateResourceException;
 import com.fourriere.exception.ResourceNotFoundException;
+import com.fourriere.entity.TransfertVehicule;
 import com.fourriere.repository.FourriereRepository;
+import com.fourriere.repository.TransfertVehiculeRepository;
 import com.fourriere.repository.VehiculeRepository;
 import com.fourriere.util.ImmatriculationUtil;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ public class VehiculeService {
 
     private final VehiculeRepository vehiculeRepository;
     private final FourriereRepository fourriereRepository;
+    private final TransfertVehiculeRepository transfertRepository;
 
     public VehiculeResponse rechercheParImmatriculation(String immatriculation) {
         String normalizedImmat = ImmatriculationUtil.normalize(immatriculation);
@@ -92,9 +95,6 @@ public class VehiculeService {
                 .dateEntree(request.getDateEntree())
                 .motifEnlevement(request.getMotifEnlevement())
                 .fourriere(fourriere)
-                // Remplir les champs dénormalisés depuis la fourrière
-                .adresseFourriere(fourriere.getAdresse())
-                .nomFourriere(fourriere.getNom())
                 .telephone(fourriere.getTelephone())
                 .latitude(fourriere.getLatitude())
                 .longitude(fourriere.getLongitude())
@@ -129,9 +129,6 @@ public class VehiculeService {
         vehicule.setDateEntree(request.getDateEntree());
         vehicule.setMotifEnlevement(request.getMotifEnlevement());
         vehicule.setFourriere(fourriere);
-        // Mettre à jour les champs dénormalisés
-        vehicule.setAdresseFourriere(fourriere.getAdresse());
-        vehicule.setNomFourriere(fourriere.getNom());
         vehicule.setTelephone(fourriere.getTelephone());
         vehicule.setLatitude(fourriere.getLatitude());
         vehicule.setLongitude(fourriere.getLongitude());
@@ -212,8 +209,8 @@ public class VehiculeService {
                 .dateEntree(vehicule.getDateEntree())
                 .motifEnlevement(vehicule.getMotifEnlevement())
                 .motifEnlevementLibelle(vehicule.getMotifEnlevement().getLibelle())
-                .adresseFourriere(vehicule.getAdresseFourriere())
-                .nomFourriere(vehicule.getNomFourriere())
+                .adresseFourriere(vehicule.getFourriere() != null ? vehicule.getFourriere().getAdresse() : null)
+                .nomFourriere(vehicule.getFourriere() != null ? vehicule.getFourriere().getNom() : null)
                 .telephone(vehicule.getTelephone())
                 .latitude(vehicule.getLatitude())
                 .longitude(vehicule.getLongitude())
@@ -236,6 +233,22 @@ public class VehiculeService {
         if (vehicule.getEquipeAjout() != null) {
             builder.equipeId(vehicule.getEquipeAjout().getId())
                    .equipeNom(vehicule.getEquipeAjout().getNom());
+        }
+
+        // Traçabilité transferts : dernier transfert s'il existe
+        if (vehicule.getId() != null) {
+            List<TransfertVehicule> historique = transfertRepository
+                    .findByVehiculeIdOrderByDateTransfertDesc(vehicule.getId());
+            if (!historique.isEmpty()) {
+                TransfertVehicule dernier = historique.get(0);
+                builder.transfere(true)
+                       .derniereDateTransfert(dernier.getDateTransfert())
+                       .derniereFourriereSourceNom(dernier.getFourriereSource().getNom());
+            } else {
+                builder.transfere(false);
+            }
+        } else {
+            builder.transfere(false);
         }
 
         return builder.build();
