@@ -105,20 +105,155 @@ import { DateFrPipe } from '../../../shared/pipes/date-fr.pipe';
     </div>
   `,
   styles: [`
+    .container {
+      padding: var(--s-6) var(--s-4);
+      max-width: var(--content-max);
+      margin: 0 auto;
+    }
+
     .page-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 24px;
+      margin-bottom: var(--s-5);
     }
 
     h1 {
       margin: 0;
-      color: #3f51b5;
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .page-header button[mat-raised-button] {
+      background: var(--brand) !important;
+      color: #fff !important;
+      border-radius: var(--r-md);
+      font-weight: 500;
+      transition: background var(--t-fast);
+    }
+    .page-header button[mat-raised-button]:hover {
+      background: var(--brand-hover) !important;
+    }
+
+    :host ::ng-deep mat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow-1);
     }
 
     table {
       width: 100%;
+      border-collapse: collapse;
+    }
+
+    :host ::ng-deep th.mat-header-cell {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: var(--s-3) var(--s-4);
+      background: var(--surface);
+    }
+
+    :host ::ng-deep td.mat-cell {
+      color: var(--text-2);
+      font-size: 14px;
+      border-bottom: 1px solid var(--border);
+      padding: var(--s-3) var(--s-4);
+    }
+
+    :host ::ng-deep tr.mat-row:hover {
+      background: var(--bg-subtle);
+      transition: background var(--t-fast);
+    }
+
+    :host ::ng-deep mat-chip[color="primary"] {
+      background-color: var(--brand-soft) !important;
+      color: var(--brand) !important;
+      font-size: 12px !important;
+      font-weight: 500 !important;
+      min-height: 24px !important;
+      padding: 0 10px !important;
+      border-radius: var(--r-pill) !important;
+    }
+
+    :host ::ng-deep mat-chip:not([color]) {
+      background-color: var(--bg-subtle) !important;
+      color: var(--text-2) !important;
+      font-size: 12px !important;
+      font-weight: 500 !important;
+      min-height: 24px !important;
+      padding: 0 10px !important;
+      border-radius: var(--r-pill) !important;
+    }
+
+    :host ::ng-deep mat-chip[color="accent"] {
+      background-color: #ecfdf5 !important;
+      color: #059669 !important;
+      font-size: 12px !important;
+      font-weight: 500 !important;
+      min-height: 24px !important;
+      padding: 0 10px !important;
+      border-radius: var(--r-pill) !important;
+    }
+
+    :host ::ng-deep mat-chip[color="warn"] {
+      background-color: var(--bg-subtle) !important;
+      color: var(--text-muted) !important;
+      font-size: 12px !important;
+      font-weight: 500 !important;
+      min-height: 24px !important;
+      padding: 0 10px !important;
+      border-radius: var(--r-pill) !important;
+    }
+
+    /* Column ellipsis */
+    :host ::ng-deep .mat-column-email {
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Actions column — always visible */
+    :host ::ng-deep .mat-column-actions {
+      width: 130px;
+      min-width: 130px;
+      max-width: 130px;
+      overflow: visible !important;
+      text-overflow: clip !important;
+    }
+
+    :host ::ng-deep button.mat-icon-button {
+      width: 30px;
+      height: 30px;
+      line-height: 30px;
+    }
+    :host ::ng-deep button.mat-icon-button .mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: var(--text-muted);
+      transition: color var(--t-fast);
+    }
+    :host ::ng-deep button.mat-icon-button:hover .mat-icon {
+      color: var(--text);
+    }
+    :host ::ng-deep button.mat-icon-button[color="warn"] .mat-icon {
+      color: var(--text-muted);
+    }
+    :host ::ng-deep button.mat-icon-button[color="warn"]:hover .mat-icon {
+      color: var(--danger);
+    }
+
+    @media (max-width: 768px) {
+      :host ::ng-deep mat-card-content {
+        overflow-x: auto;
+      }
     }
   `]
 })
@@ -127,7 +262,7 @@ export class UtilisateursComponent implements OnInit {
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
 
-  displayedColumns = ['nom', 'email', 'role', 'actif', 'createdAt', 'actions'];
+  displayedColumns = ['nom', 'email', 'role', 'actif', 'actions'];
   utilisateurs: Utilisateur[] = [];
   loading = true;
 

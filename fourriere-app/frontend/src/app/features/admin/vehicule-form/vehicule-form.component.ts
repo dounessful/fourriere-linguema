@@ -223,145 +223,153 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
     </div>
   `,
   styles: [`
+    :host {
+      display: block;
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: var(--s-6) var(--s-4);
+    }
+
     .page-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 24px;
+      margin-bottom: var(--s-6);
     }
 
     h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text);
       margin: 0;
-      color: var(--color-primary);
     }
 
     .form-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-      gap: 24px;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--s-5);
+
+      @media (max-width: 820px) { grid-template-columns: 1fr; }
     }
 
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
+      gap: var(--s-4);
+      margin-bottom: var(--s-3);
+
+      @media (max-width: 600px) { grid-template-columns: 1fr; }
     }
 
-    .full-width {
-      width: 100%;
-    }
+    .full-width { width: 100%; margin-bottom: var(--s-3); }
 
     mat-form-field {
       width: 100%;
+      // Rétablir le subscript pour laisser de l'espace entre les champs dans les formulaires
+      ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+        display: block;
+      }
     }
 
     .fourriere-info {
-      margin-top: var(--space-4);
-      padding: var(--space-4);
-      background: var(--color-primary-50);
-      border-radius: var(--radius-md);
+      margin-top: var(--s-4);
+      padding: var(--s-4);
+      background: var(--brand-soft);
+      border: 1px solid var(--brand-soft-2);
+      border-radius: var(--r-md);
     }
 
     .info-row {
       display: flex;
       align-items: center;
-      gap: var(--space-2);
-      margin-bottom: var(--space-2);
-      color: var(--color-text);
+      gap: var(--s-2);
+      margin-bottom: var(--s-2);
+      font-size: 14px;
+      color: var(--text-2);
 
       mat-icon {
-        color: var(--color-primary);
-        font-size: 20px;
-        width: 20px;
-        height: 20px;
+        color: var(--brand);
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
       }
 
-      &:last-child {
-        margin-bottom: 0;
-      }
+      &:last-child { margin-bottom: 0; }
     }
 
     .no-fourriere-message {
       display: flex;
       align-items: flex-start;
-      gap: var(--space-3);
-      padding: var(--space-4);
-      background: var(--color-surface);
-      border: 1px dashed var(--color-border);
-      border-radius: var(--radius-md);
-      margin-top: var(--space-4);
+      gap: var(--s-3);
+      padding: var(--s-4);
+      background: var(--bg-subtle);
+      border: 1px dashed var(--border);
+      border-radius: var(--r-md);
+      margin-top: var(--s-4);
 
-      mat-icon {
-        color: var(--color-text-muted);
-      }
-
-      p {
-        margin: 0;
-        color: var(--color-text-muted);
-      }
+      mat-icon { color: var(--text-faint); flex-shrink: 0; }
+      p { margin: 0; color: var(--text-muted); font-size: 14px; }
     }
 
-    .map-section {
-      margin-top: 16px;
-    }
-
+    .map-section { margin-top: var(--s-4); }
     .map-section p {
-      margin-bottom: 8px;
-      color: var(--color-text-muted);
+      margin-bottom: var(--s-2);
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .map-section ::ng-deep .leaflet-container {
+      height: 200px;
+      border-radius: var(--r-md);
+      border: 1px solid var(--border);
     }
 
-    .photos-card {
-      grid-column: 1 / -1;
-    }
+    .photos-card { grid-column: 1 / -1; }
 
     .photos-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: var(--s-3);
     }
 
     .photo-item {
       position: relative;
+      border-radius: var(--r-md);
+      overflow: hidden;
+      border: 1px solid var(--border);
     }
-
     .photo-item img {
       width: 100%;
-      height: 120px;
+      height: 110px;
       object-fit: cover;
-      border-radius: 8px;
+      display: block;
     }
-
     .photo-item button {
       position: absolute;
       top: 4px;
       right: 4px;
-      background: white;
+      background: var(--surface);
+      border-radius: 50%;
+      box-shadow: var(--shadow-1);
     }
 
     .photo-upload {
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 120px;
-      border: 2px dashed #ccc;
-      border-radius: 8px;
+      height: 110px;
+      border: 2px dashed var(--border);
+      border-radius: var(--r-md);
+      background: var(--bg-subtle);
     }
 
     .form-actions {
       display: flex;
       justify-content: flex-end;
-      gap: 16px;
-      margin-top: 24px;
-    }
-
-    @media (max-width: 600px) {
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
+      gap: var(--s-3);
+      margin-top: var(--s-6);
+      padding-top: var(--s-5);
+      border-top: 1px solid var(--border);
     }
   `]
 })

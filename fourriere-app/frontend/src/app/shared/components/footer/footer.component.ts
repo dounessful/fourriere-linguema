@@ -10,14 +10,15 @@ import { RouterLink } from '@angular/router';
     <footer class="ft">
       <div class="ft-top">
         <a routerLink="/" class="ft-brand">
-          <span class="ft-mark">
+          <img class="ft-logo" src="assets/logo.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+          <span class="ft-mark" style="display:none">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/>
               <circle cx="6.5" cy="16.5" r="2.5"/>
               <circle cx="16.5" cy="16.5" r="2.5"/>
             </svg>
           </span>
-          <span class="ft-name">Linguema</span>
+          <span class="ft-name">Linguema Fourrière</span>
         </a>
 
         <nav class="ft-nav">
@@ -41,7 +42,7 @@ import { RouterLink } from '@angular/router';
       </div>
 
       <div class="ft-bot">
-        <span>© {{ year }} Linguema</span>
+        <span>© {{ year }} Linguema Fourrière</span>
         <span class="ft-loc">Dakar · Sénégal</span>
       </div>
     </footer>
@@ -76,6 +77,11 @@ import { RouterLink } from '@angular/router';
       gap: var(--s-2);
       color: var(--text);
       &:hover { color: var(--text); }
+    }
+    .ft-logo {
+      height: 36px;
+      width: auto;
+      object-fit: contain;
     }
     .ft-mark {
       width: 28px; height: 28px;

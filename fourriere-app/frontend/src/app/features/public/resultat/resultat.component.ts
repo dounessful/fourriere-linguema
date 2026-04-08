@@ -214,9 +214,7 @@ import { DateFrPipe } from '../../../shared/pipes/date-fr.pipe';
     .fold {
       position: relative;
       padding: var(--s-5) 0 var(--s-6);
-      background:
-        radial-gradient(ellipse 60% 40% at 50% 0%, rgba(187, 247, 208, 0.4) 0%, transparent 65%),
-        var(--bg);
+      background: var(--bg);
 
       @media (min-height: 760px) and (min-width: 900px) {
         min-height: calc(100vh - var(--header-h) - var(--s-8));
@@ -241,13 +239,13 @@ import { DateFrPipe } from '../../../shared/pipes/date-fr.pipe';
     /* ============ REWARD BADGE — englobe tout ============ */
     .badge {
       position: relative;
-      background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%);
+      background: linear-gradient(180deg, #ffffff 0%, #fef2f2 100%);
       border: 1.5px solid var(--brand-soft-2);
       border-radius: 14px;
       overflow: hidden;
       margin-bottom: var(--s-5);
       box-shadow:
-        0 16px 36px -16px rgba(20, 83, 45, 0.22),
+        0 16px 36px -16px rgba(127, 29, 29, 0.22),
         0 4px 10px -4px rgba(28, 25, 23, 0.06),
         inset 0 1px 0 rgba(255, 255, 255, 0.9);
       animation: pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -294,7 +292,7 @@ import { DateFrPipe } from '../../../shared/pipes/date-fr.pipe';
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 2px 6px -1px rgba(21, 128, 61, 0.45);
+      box-shadow: 0 2px 6px -1px rgba(185, 28, 28, 0.45);
     }
 
     .strip-text {
@@ -336,7 +334,7 @@ import { DateFrPipe } from '../../../shared/pipes/date-fr.pipe';
       background: var(--surface);
       border: 1px solid var(--brand-soft-2);
       border-radius: 10px;
-      box-shadow: 0 4px 12px -6px rgba(20, 83, 45, 0.18);
+      box-shadow: 0 4px 12px -6px rgba(127, 29, 29, 0.18);
     }
     .plate-label {
       font-size: 9px;
@@ -413,15 +411,15 @@ import { DateFrPipe } from '../../../shared/pipes/date-fr.pipe';
       .ping {
         width: 6px; height: 6px; border-radius: 50%;
         background: var(--brand);
-        box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.18);
+        box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.18);
         animation: pulse 2s ease-in-out infinite;
       }
     }
-    .tag-success { background: #fff; color: #166534; border-color: #bbf7d0; }
+    .tag-success { background: #fff; color: var(--text-2); border-color: var(--border-strong); }
     .tag-info { background: #fff; color: #1d4ed8; border-color: #bfdbfe; }
     @keyframes pulse {
-      0%,100% { box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.18); }
-      50%     { box-shadow: 0 0 0 5px rgba(21, 128, 61, 0.08); }
+      0%,100% { box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.18); }
+      50%     { box-shadow: 0 0 0 5px rgba(185, 28, 28, 0.08); }
     }
 
     /* ============ CONTENT GRID ============ */
@@ -516,7 +514,7 @@ import { DateFrPipe } from '../../../shared/pipes/date-fr.pipe';
       margin: 0;
     }
     .combo-cost {
-      background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+      background: linear-gradient(135deg, #ffffff 0%, #fef2f2 100%);
     }
 
     .cost-amount {
@@ -610,14 +608,14 @@ import { DateFrPipe } from '../../../shared/pipes/date-fr.pipe';
       border-radius: 9px;
       font-size: 13px;
       font-weight: 600;
-      box-shadow: 0 4px 12px -2px rgba(21, 128, 61, 0.35);
+      box-shadow: 0 4px 12px -2px rgba(185, 28, 28, 0.35);
       transition: all var(--t-fast);
 
       &:hover {
         background: var(--brand-hover);
         color: #fff;
         transform: translateY(-1px);
-        box-shadow: 0 6px 16px -2px rgba(21, 128, 61, 0.45);
+        box-shadow: 0 6px 16px -2px rgba(185, 28, 28, 0.45);
       }
     }
 
@@ -646,7 +644,7 @@ import { DateFrPipe } from '../../../shared/pipes/date-fr.pipe';
       border-radius: 10px;
       font-size: 14px;
       font-weight: 600;
-      box-shadow: 0 4px 12px -2px rgba(21, 128, 61, 0.35);
+      box-shadow: 0 4px 12px -2px rgba(185, 28, 28, 0.35);
       &:hover { background: var(--brand-hover); color: #fff; }
     }
   `]

@@ -23,16 +23,13 @@ import { AuthService } from '../../../core/services/auth.service';
     <header class="hdr">
       <div class="hdr-inner">
         <a routerLink="/" class="brand" aria-label="Linguema accueil">
-          <span class="brand-mark" aria-hidden="true">
+          <img class="brand-logo" src="assets/logo.png" alt="Linguema" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+          <span class="brand-mark" aria-hidden="true" style="display:none">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/>
               <circle cx="6.5" cy="16.5" r="2.5"/>
               <circle cx="16.5" cy="16.5" r="2.5"/>
             </svg>
-          </span>
-          <span class="brand-text">
-            <span class="brand-name">Linguema</span>
-            <span class="brand-sub">Fourrière · Sénégal</span>
           </span>
         </a>
 
@@ -57,18 +54,28 @@ import { AuthService } from '../../../core/services/auth.service';
             </button>
             <mat-menu #userMenu="matMenu" xPosition="before">
               <div class="menu-head">
-                <div class="menu-name">{{ authService.utilisateur()?.nom }}</div>
-                <div class="menu-email">{{ authService.utilisateur()?.email }}</div>
+                <div class="menu-avatar">{{ initials() }}</div>
+                <div class="menu-info">
+                  <div class="menu-name">{{ authService.utilisateur()?.nom || authService.utilisateur()?.email }}</div>
+                  <div class="menu-email">{{ authService.utilisateur()?.email }}</div>
+                  <div class="menu-role">
+                    @if (authService.isSuperAdmin()) {
+                      <span class="role-badge role-super">Super Admin</span>
+                    } @else if (authService.isAdmin()) {
+                      <span class="role-badge role-admin">Admin</span>
+                    }
+                  </div>
+                </div>
               </div>
               <mat-divider></mat-divider>
               <button mat-menu-item (click)="onLogout()">
                 <mat-icon>logout</mat-icon>
-                <span>Se déconnecter</span>
+                <span>Deconnexion</span>
               </button>
             </mat-menu>
           } @else {
             <button class="login-btn" (click)="onLogin()" type="button">
-              Espace administration
+              Espace compte
             </button>
           }
         </div>
@@ -88,7 +95,7 @@ import { AuthService } from '../../../core/services/auth.service';
     .hdr-inner {
       max-width: var(--content-max);
       margin: 0 auto;
-      height: var(--header-h);
+      height: 68px;
       padding: 0 var(--s-6);
       display: flex;
       align-items: center;
@@ -108,6 +115,12 @@ import { AuthService } from '../../../core/services/auth.service';
       flex-shrink: 0;
 
       &:hover { color: var(--text); }
+    }
+
+    .brand-logo {
+      height: 65px;
+      width: auto;
+      object-fit: contain;
     }
 
     .brand-mark {
@@ -231,10 +244,61 @@ import { AuthService } from '../../../core/services/auth.service';
     }
 
     ::ng-deep .menu-head {
-      padding: var(--s-3) var(--s-4);
+      padding: var(--s-4) var(--s-5);
+      display: flex;
+      align-items: flex-start;
+      gap: var(--s-3);
     }
-    ::ng-deep .menu-name { font-size: 13px; font-weight: 600; color: var(--text); }
-    ::ng-deep .menu-email { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    ::ng-deep .menu-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--brand);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    ::ng-deep .menu-info { display: flex; flex-direction: column; min-width: 0; }
+    ::ng-deep .menu-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    ::ng-deep .menu-email {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    ::ng-deep .menu-role { margin-top: var(--s-2); }
+    ::ng-deep .role-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: var(--r-pill);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    ::ng-deep .role-super {
+      background: var(--brand-soft);
+      color: var(--brand-dark);
+      border: 1px solid var(--brand-soft-2);
+    }
+    ::ng-deep .role-admin {
+      background: var(--bg-subtle);
+      color: var(--text-2);
+      border: 1px solid var(--border);
+    }
   `]
 })
 export class HeaderComponent {

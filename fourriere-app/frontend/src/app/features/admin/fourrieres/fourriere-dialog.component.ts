@@ -123,32 +123,73 @@ import { Fourriere, FourriereRequest } from '../../../core/models/fourriere.mode
     h2[mat-dialog-title] {
       display: flex;
       align-items: center;
-      gap: var(--space-2);
+      gap: var(--s-2);
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0;
+      padding: var(--s-5) var(--s-6) var(--s-3);
 
       mat-icon {
-        color: var(--color-primary);
+        color: var(--brand);
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
       }
     }
 
     .fourriere-form {
       display: flex;
       flex-direction: column;
-      gap: var(--space-3);
+      gap: var(--s-1);
       min-width: 500px;
+      padding: 0 var(--s-2);
     }
 
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: var(--space-4);
+      gap: var(--s-4);
     }
 
     .full-width {
       width: 100%;
     }
 
+    :host ::ng-deep .mat-mdc-form-field {
+      font-size: 14px;
+    }
+
+    :host ::ng-deep .mat-mdc-text-field-wrapper {
+      border-radius: var(--r-md) !important;
+    }
+
     mat-slide-toggle {
-      margin-top: var(--space-2);
+      margin-top: var(--s-2);
+    }
+
+    :host ::ng-deep mat-dialog-actions {
+      padding: var(--s-4) var(--s-6);
+      border-top: 1px solid var(--border);
+      gap: var(--s-2);
+    }
+
+    :host ::ng-deep mat-dialog-actions button[mat-button] {
+      border: 1px solid var(--border-strong);
+      border-radius: var(--r-md);
+      color: var(--text-2);
+      font-weight: 500;
+    }
+
+    :host ::ng-deep mat-dialog-actions button[mat-raised-button] {
+      background: var(--brand) !important;
+      color: #fff !important;
+      border-radius: var(--r-md);
+      font-weight: 500;
+      transition: background var(--t-fast);
+    }
+    :host ::ng-deep mat-dialog-actions button[mat-raised-button]:hover {
+      background: var(--brand-hover) !important;
     }
 
     @media (max-width: 600px) {

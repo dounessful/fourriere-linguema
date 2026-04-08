@@ -88,7 +88,7 @@ import { ConfirmDialogComponent } from '../dashboard/confirm-dialog.component';
                   <button mat-icon-button [color]="e.active ? 'warn' : 'accent'"
                           [matTooltip]="e.active ? 'Désactiver' : 'Activer'"
                           (click)="toggleActive(e)">
-                    <mat-icon>{{ e.active ? 'visibility_off' : 'visibility' }}</mat-icon>
+                    <mat-icon>{{ e.active ? 'toggle_off' : 'toggle_on' }}</mat-icon>
                   </button>
                   <button mat-icon-button color="warn" matTooltip="Supprimer" (click)="confirmDelete(e)">
                     <mat-icon>delete</mat-icon>
@@ -116,66 +116,180 @@ import { ConfirmDialogComponent } from '../dashboard/confirm-dialog.component';
   `,
   styles: [`
     .equipes-container {
-      padding: var(--space-6);
-      max-width: 1200px;
+      padding: var(--s-6) var(--s-4);
+      max-width: var(--content-max);
       margin: 0 auto;
     }
 
     .equipes-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow-1);
+
       mat-card-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: var(--space-4);
+        padding: var(--s-5) var(--s-6);
+        border-bottom: 1px solid var(--border);
 
         mat-card-title {
           display: flex;
           align-items: center;
-          gap: var(--space-2);
+          gap: var(--s-2);
           margin: 0;
+          font-size: 22px;
+          font-weight: 600;
+          color: var(--text);
 
           mat-icon {
-            color: var(--color-primary);
+            color: var(--brand);
           }
+        }
+
+        button[mat-raised-button] {
+          background: var(--brand) !important;
+          color: #fff !important;
+          border-radius: var(--r-md);
+          font-weight: 500;
+          transition: background var(--t-fast);
+        }
+        button[mat-raised-button]:hover {
+          background: var(--brand-hover) !important;
         }
       }
     }
 
     .equipes-table {
       width: 100%;
+      border-collapse: collapse;
+    }
+
+    :host ::ng-deep .equipes-table th.mat-header-cell {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: var(--s-3) var(--s-4);
+      background: var(--surface);
+    }
+
+    :host ::ng-deep .equipes-table td.mat-cell {
+      color: var(--text-2);
+      font-size: 14px;
+      border-bottom: 1px solid var(--border);
+      padding: var(--s-3) var(--s-4);
+    }
+
+    :host ::ng-deep .equipes-table tr.mat-row:hover {
+      background: var(--bg-subtle);
+      transition: background var(--t-fast);
     }
 
     .loading-container {
       display: flex;
       justify-content: center;
-      padding: var(--space-8);
+      padding: var(--s-12);
     }
 
     .empty-state {
       text-align: center;
-      padding: var(--space-8);
-      color: var(--color-text-muted);
+      padding: var(--s-12);
+      color: var(--text-muted);
 
       mat-icon {
         font-size: 48px;
         width: 48px;
         height: 48px;
-        margin-bottom: var(--space-4);
+        margin-bottom: var(--s-4);
+        color: var(--text-faint);
       }
 
       p {
-        margin-bottom: var(--space-4);
+        margin-bottom: var(--s-4);
+        font-size: 15px;
+      }
+
+      button {
+        border-color: var(--brand) !important;
+        color: var(--brand) !important;
+        border-radius: var(--r-md);
       }
     }
 
     mat-chip.active {
-      background-color: var(--color-success-light) !important;
-      color: var(--color-success) !important;
+      background-color: #ecfdf5 !important;
+      color: #059669 !important;
+      font-size: 12px !important;
+      font-weight: 500 !important;
+      min-height: 24px !important;
+      padding: 0 10px !important;
+      border-radius: var(--r-pill) !important;
     }
 
     mat-chip.inactive {
-      background-color: var(--color-warn-light) !important;
-      color: var(--color-warn) !important;
+      background-color: var(--bg-subtle) !important;
+      color: var(--text-muted) !important;
+      font-size: 12px !important;
+      font-weight: 500 !important;
+      min-height: 24px !important;
+      padding: 0 10px !important;
+      border-radius: var(--r-pill) !important;
+    }
+
+    /* Column ellipsis */
+    :host ::ng-deep .mat-column-description {
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    :host ::ng-deep .mat-column-zone {
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Actions column — always visible */
+    :host ::ng-deep .mat-column-actions {
+      width: 130px;
+      min-width: 130px;
+      max-width: 130px;
+      overflow: visible !important;
+      text-overflow: clip !important;
+    }
+
+    :host ::ng-deep button.mat-icon-button {
+      width: 30px;
+      height: 30px;
+      line-height: 30px;
+    }
+    :host ::ng-deep button.mat-icon-button .mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: var(--text-muted);
+      transition: color var(--t-fast);
+    }
+    :host ::ng-deep button.mat-icon-button:hover .mat-icon {
+      color: var(--text);
+    }
+    :host ::ng-deep button.mat-icon-button[color="warn"] .mat-icon {
+      color: var(--text-muted);
+    }
+    :host ::ng-deep button.mat-icon-button[color="warn"]:hover .mat-icon {
+      color: var(--danger);
+    }
+
+    @media (max-width: 768px) {
+      :host ::ng-deep mat-card-content {
+        overflow-x: auto;
+      }
     }
   `]
 })
@@ -187,7 +301,7 @@ export class EquipeListComponent implements OnInit {
   equipes = signal<Equipe[]>([]);
   loading = signal(true);
 
-  displayedColumns = ['nom', 'description', 'zone', 'fourriere', 'statut', 'actions'];
+  displayedColumns = ['nom', 'zone', 'fourriere', 'statut', 'actions'];
 
   ngOnInit(): void {
     this.loadEquipes();

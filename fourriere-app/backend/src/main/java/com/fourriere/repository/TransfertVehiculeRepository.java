@@ -16,15 +16,11 @@ public interface TransfertVehiculeRepository extends JpaRepository<TransfertVehi
 
     long countByFourriereDestinationId(Long fourriereId);
 
-    @Query("""
-        SELECT t FROM TransfertVehicule t
-        WHERE (:fourriereId IS NULL
-               OR t.fourriereSource.id = :fourriereId
-               OR t.fourriereDestination.id = :fourriereId)
-          AND (:dateDebut IS NULL OR t.dateTransfert >= :dateDebut)
-          AND (:dateFin   IS NULL OR t.dateTransfert <= :dateFin)
-        ORDER BY t.dateTransfert DESC
-    """)
+    @Query("SELECT t FROM TransfertVehicule t WHERE " +
+           "(COALESCE(:fourriereId, -1) = -1 OR t.fourriereSource.id = :fourriereId OR t.fourriereDestination.id = :fourriereId) AND " +
+           "(CAST(:dateDebut AS timestamp) IS NULL OR t.dateTransfert >= :dateDebut) AND " +
+           "(CAST(:dateFin AS timestamp) IS NULL OR t.dateTransfert <= :dateFin) " +
+           "ORDER BY t.dateTransfert DESC")
     Page<TransfertVehicule> findAllWithFilters(@Param("fourriereId") Long fourriereId,
                                                @Param("dateDebut") LocalDateTime dateDebut,
                                                @Param("dateFin") LocalDateTime dateFin,

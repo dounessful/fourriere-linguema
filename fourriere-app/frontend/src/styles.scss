@@ -6,23 +6,24 @@
 // =============================================================================
 
 // ---------- Material palettes (kept minimal — we override most surfaces) -----
+// Linguema : rouge foncé chaleureux comme couleur de marque
 $brand: (
-  50:  #ecfdf5,
-  100: #d1fae5,
-  200: #a7f3d0,
-  300: #6ee7b7,
-  400: #34d399,
-  500: #15803d,
-  600: #166534,
-  700: #14532d,
-  800: #14532d,
-  900: #052e16,
-  A100: #d1fae5,
-  A200: #6ee7b7,
-  A400: #15803d,
-  A700: #14532d,
+  50:  #fef2f2,
+  100: #fee2e2,
+  200: #fecaca,
+  300: #fca5a5,
+  400: #f87171,
+  500: #b91c1c,
+  600: #991b1b,
+  700: #7f1d1d,
+  800: #7f1d1d,
+  900: #450a0a,
+  A100: #fee2e2,
+  A200: #fca5a5,
+  A400: #b91c1c,
+  A700: #7f1d1d,
   contrast: (
-    50: #1c1917, 100: #1c1917, 200: #1c1917, 300: #1c1917, 400: #1c1917,
+    50: #1c1917, 100: #1c1917, 200: #1c1917, 300: #1c1917, 400: #ffffff,
     500: #ffffff, 600: #ffffff, 700: #ffffff, 800: #ffffff, 900: #ffffff,
     A100: #1c1917, A200: #1c1917, A400: #ffffff, A700: #ffffff,
   )
@@ -68,11 +69,11 @@ $theme: mat.define-light-theme((
 
 // ---------- Design tokens ----------------------------------------------------
 :root {
-  // Surfaces — vert très pâle / blanc
-  --bg:           #f6fbf8;   /* mix vert-blanc subtil */
-  --bg-subtle:    #ecf6f0;
+  // Surfaces — blanc neutre chaud (la couleur Linguema reste accent uniquement)
+  --bg:           #fdfcfc;
+  --bg-subtle:    #f5f5f4;
   --surface:      #ffffff;
-  --surface-2:    #f6fbf8;
+  --surface-2:    #fdfcfc;
 
   // Borders
   --border:       #e7e5e4;
@@ -84,12 +85,12 @@ $theme: mat.define-light-theme((
   --text-muted:   #78716c;
   --text-faint:   #a8a29e;
 
-  // Brand (deep emerald)
-  --brand:        #15803d;
-  --brand-hover:  #166534;
-  --brand-dark:   #14532d;
-  --brand-soft:   #ecfdf5;
-  --brand-soft-2: #d1fae5;
+  // Brand (Linguema rouge foncé)
+  --brand:        #b91c1c;
+  --brand-hover:  #991b1b;
+  --brand-dark:   #7f1d1d;
+  --brand-soft:   #fef2f2;
+  --brand-soft-2: #fecaca;
 
   // Accents (used very sparingly)
   --gold:         #b45309;
@@ -175,7 +176,7 @@ a {
 
 button { font: inherit; cursor: pointer; }
 
-::selection { background: var(--brand-soft-2); color: var(--brand-dark); }
+::selection { background: var(--brand-soft); color: var(--brand-dark); }
 
 // ---------- Layout primitives ------------------------------------------------
 .container {
@@ -237,8 +238,10 @@ button { font: inherit; cursor: pointer; }
   letter-spacing: 0 !important;
 }
 
-// Form fields — outlined, calm
+// Form fields — outlined, refined
 .mat-mdc-form-field {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+
   .mdc-text-field--outlined {
     --mdc-outlined-text-field-container-shape: var(--r-md);
     background: var(--surface);
@@ -254,6 +257,54 @@ button { font: inherit; cursor: pointer; }
     .mdc-notched-outline__trailing {
       border-color: var(--brand) !important;
       border-width: 1.5px !important;
+    }
+  }
+
+  // Compact density for admin forms — vertically centered labels
+  .mat-mdc-form-field-infix {
+    min-height: 44px !important;
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+  .mat-mdc-floating-label {
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    color: var(--text-muted) !important;
+    top: 50% !important;
+  }
+  .mat-mdc-select-value-text,
+  .mdc-text-field__input {
+    font-family: 'Inter', -apple-system, sans-serif !important;
+    font-size: 14px !important;
+    color: var(--text) !important;
+  }
+  // Hide subscript (error/hint) to keep fields compact
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+}
+
+// Select panel (dropdown)
+.mat-mdc-select-panel {
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: var(--shadow-2) !important;
+  background: var(--surface) !important;
+
+  .mat-mdc-option {
+    font-family: 'Inter', -apple-system, sans-serif !important;
+    font-size: 14px !important;
+    min-height: 40px !important;
+    color: var(--text) !important;
+
+    &:hover:not(.mdc-list-item--disabled) {
+      background: var(--bg-subtle) !important;
+    }
+    &.mdc-list-item--selected:not(.mdc-list-item--disabled) {
+      background: var(--brand-soft) !important;
+      color: var(--brand-dark) !important;
     }
   }
 }
@@ -278,7 +329,16 @@ button { font: inherit; cursor: pointer; }
     &:hover { background: var(--bg-subtle); }
     &:last-child { border-bottom: 0; }
   }
-  .mat-mdc-cell { color: var(--text); font-size: 14px; }
+  .mat-mdc-cell {
+    color: var(--text);
+    font-size: 14px;
+    font-family: 'Inter', -apple-system, sans-serif;
+    white-space: nowrap;
+  }
+  .mat-mdc-header-cell {
+    white-space: nowrap;
+    font-family: 'Inter', -apple-system, sans-serif !important;
+  }
 }
 
 .mat-mdc-paginator {

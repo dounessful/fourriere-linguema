@@ -298,7 +298,7 @@ import { VehiculeService } from '../../../core/services/vehicule.service';
       overflow: hidden;
       padding: var(--s-12) var(--s-6) var(--s-8);
       background:
-        radial-gradient(ellipse 70% 50% at 50% 0%, rgba(187, 247, 208, 0.55) 0%, transparent 70%),
+        radial-gradient(ellipse 70% 50% at 50% 0%, rgba(254, 226, 226, 0.55) 0%, transparent 70%),
         linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
       display: flex;
       align-items: center;
@@ -313,7 +313,7 @@ import { VehiculeService } from '../../../core/services/vehicule.service';
     }
 
     .hero-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-    .grid-pattern { position: absolute; inset: 0; color: #15803d; opacity: 0.04; }
+    .grid-pattern { position: absolute; inset: 0; color: #b91c1c; opacity: 0.04; }
     .blob {
       position: absolute;
       border-radius: 50%;
@@ -321,7 +321,7 @@ import { VehiculeService } from '../../../core/services/vehicule.service';
     }
     .blob-1 {
       width: 460px; height: 460px;
-      background: radial-gradient(circle, #6ee7b7 0%, transparent 70%);
+      background: radial-gradient(circle, #fca5a5 0%, transparent 70%);
       top: -160px; right: -120px;
       opacity: 0.4;
     }
@@ -379,10 +379,10 @@ import { VehiculeService } from '../../../core/services/vehicule.service';
       background: #ffffff;
       border: 1.5px solid var(--border-strong);
       border-radius: 14px;
-      box-shadow: 0 14px 36px -12px rgba(20, 83, 45, 0.18), 0 4px 8px -4px rgba(28, 25, 23, 0.05);
+      box-shadow: 0 14px 36px -12px rgba(127, 29, 29, 0.18), 0 4px 8px -4px rgba(28, 25, 23, 0.05);
       transition: all var(--t-base);
-      &:hover { border-color: #a7f3d0; }
-      &.is-focused { border-color: var(--brand); box-shadow: 0 0 0 4px rgba(21, 128, 61, 0.12), 0 14px 36px -12px rgba(20, 83, 45, 0.22); }
+      &:hover { border-color: #fecaca; }
+      &.is-focused { border-color: var(--brand); box-shadow: 0 0 0 4px rgba(185, 28, 28, 0.12), 0 14px 36px -12px rgba(127, 29, 29, 0.22); }
       &.has-error { border-color: var(--danger); }
     }
     .search-icon { color: var(--brand); display: inline-flex; flex-shrink: 0; }
@@ -399,9 +399,9 @@ import { VehiculeService } from '../../../core/services/vehicule.service';
       height: 48px; padding: 0 var(--s-5);
       background: var(--brand); color: #fff; border: none; border-radius: 10px;
       font-size: 14px; font-weight: 600;
-      box-shadow: 0 4px 12px -2px rgba(21, 128, 61, 0.4);
+      box-shadow: 0 4px 12px -2px rgba(185, 28, 28, 0.4);
       transition: all var(--t-fast); flex-shrink: 0;
-      &:hover:not(:disabled) { background: var(--brand-hover); transform: translateY(-1px); box-shadow: 0 6px 16px -2px rgba(21, 128, 61, 0.5); }
+      &:hover:not(:disabled) { background: var(--brand-hover); transform: translateY(-1px); box-shadow: 0 6px 16px -2px rgba(185, 28, 28, 0.5); }
       &:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
       ::ng-deep .mat-mdc-progress-spinner circle { stroke: #fff; }
       @media (max-width: 480px) { padding: 0 var(--s-3); span { display: none; } }
@@ -445,7 +445,7 @@ import { VehiculeService } from '../../../core/services/vehicule.service';
     .how {
       padding: var(--s-8) 0 var(--s-10);
       background:
-        radial-gradient(ellipse 60% 80% at 90% 100%, rgba(209, 250, 229, 0.4) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 90% 100%, rgba(254, 226, 226, 0.35) 0%, transparent 60%),
         var(--bg);
       position: relative;
 
@@ -483,8 +483,8 @@ import { VehiculeService } from '../../../core/services/vehicule.service';
       &:hover {
         border-color: var(--brand-soft-2);
         transform: translateY(-3px);
-        box-shadow: 0 14px 32px -16px rgba(20, 83, 45, 0.22);
-        .col-icon { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-color: var(--brand); }
+        box-shadow: 0 14px 32px -16px rgba(127, 29, 29, 0.22);
+        .col-icon { background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); border-color: var(--brand); }
       }
     }
 
@@ -498,7 +498,7 @@ import { VehiculeService } from '../../../core/services/vehicule.service';
     .col-icon {
       width: 40px; height: 40px;
       border-radius: 10px;
-      background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+      background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
       border: 1px solid var(--brand-soft-2);
       color: var(--brand);
       display: inline-flex; align-items: center; justify-content: center;
@@ -545,7 +545,7 @@ import { VehiculeService } from '../../../core/services/vehicule.service';
     .faq {
       padding: var(--s-12) 0 var(--s-16);
       background:
-        radial-gradient(ellipse 50% 60% at 0% 50%, rgba(187, 247, 208, 0.35) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 60% at 0% 50%, rgba(254, 226, 226, 0.3) 0%, transparent 60%),
         var(--bg);
     }
 
@@ -566,7 +566,7 @@ import { VehiculeService } from '../../../core/services/vehicule.service';
       &:hover { border-color: var(--brand-soft-2); }
       &[open] {
         border-color: var(--brand-soft-2);
-        background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%);
+        background: linear-gradient(180deg, #ffffff 0%, #fef2f2 100%);
       }
 
       summary {
@@ -637,7 +637,7 @@ import { VehiculeService } from '../../../core/services/vehicule.service';
     }
     .help-text {
       position: relative;
-      .eyebrow { display: block; color: #d1fae5; margin-bottom: var(--s-3); }
+      .eyebrow { display: block; color: #fecaca; margin-bottom: var(--s-3); }
       h2 {
         font-size: clamp(20px, 2.4vw, 26px);
         font-weight: 700;

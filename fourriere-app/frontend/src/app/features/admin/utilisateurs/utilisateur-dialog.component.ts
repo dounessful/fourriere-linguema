@@ -78,13 +78,58 @@ import { Utilisateur, UtilisateurRequest, Role } from '../../../core/models/auth
     </mat-dialog-actions>
   `,
   styles: [`
+    :host ::ng-deep h2[mat-dialog-title] {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0;
+      padding: var(--s-5) var(--s-6) var(--s-3);
+    }
+
     .full-width {
       width: 100%;
-      margin-bottom: 8px;
+      margin-bottom: var(--s-1);
+    }
+
+    :host ::ng-deep .mat-mdc-form-field {
+      font-size: 14px;
+    }
+
+    :host ::ng-deep .mat-mdc-text-field-wrapper {
+      border-radius: var(--r-md) !important;
+    }
+
+    :host ::ng-deep mat-dialog-content {
+      padding: var(--s-2) var(--s-6);
     }
 
     mat-checkbox {
-      margin-top: 8px;
+      margin-top: var(--s-2);
+      color: var(--text-2);
+    }
+
+    :host ::ng-deep mat-dialog-actions {
+      padding: var(--s-4) var(--s-6);
+      border-top: 1px solid var(--border);
+      gap: var(--s-2);
+    }
+
+    :host ::ng-deep mat-dialog-actions button[mat-button] {
+      border: 1px solid var(--border-strong);
+      border-radius: var(--r-md);
+      color: var(--text-2);
+      font-weight: 500;
+    }
+
+    :host ::ng-deep mat-dialog-actions button[mat-raised-button] {
+      background: var(--brand) !important;
+      color: #fff !important;
+      border-radius: var(--r-md);
+      font-weight: 500;
+      transition: background var(--t-fast);
+    }
+    :host ::ng-deep mat-dialog-actions button[mat-raised-button]:hover {
+      background: var(--brand-hover) !important;
     }
   `]
 })

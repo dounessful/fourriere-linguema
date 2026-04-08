@@ -273,108 +273,122 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
     </div>
   `,
   styles: [`
+    /* Dashboard Page */
     .dashboard-page {
-      min-height: calc(100vh - 72px - 200px);
-      background: var(--color-background);
+      min-height: calc(100vh - var(--header-h) - 200px);
+      background: var(--bg);
     }
 
-    // Page Header
+    /* Container */
+    .container {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: 0 var(--s-5);
+    }
+
+    /* Page Header — simple, no colored banner */
     .page-header {
-      background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
-      padding: var(--space-8) 0;
-      color: white;
-      margin-bottom: var(--space-6);
+      background: transparent;
+      padding: var(--s-8) 0 var(--s-4);
     }
 
     .header-content {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: var(--space-4);
-
-      @media (max-width: 600px) {
-        flex-direction: column;
-        text-align: center;
-      }
+      gap: var(--s-4);
     }
 
     .header-text h1 {
-      font-size: 2rem;
+      font-size: 24px;
       font-weight: 700;
-      margin-bottom: var(--space-1);
-      color: white;
+      color: var(--text);
+      margin: 0 0 2px;
+      line-height: 1.3;
     }
 
     .header-subtitle {
-      font-size: 1rem;
-      opacity: 0.85;
+      font-size: 14px;
+      color: var(--text-muted);
+      margin: 0;
     }
 
     .add-btn {
-      height: 48px;
-      padding: 0 var(--space-6) !important;
+      height: 40px;
+      padding: 0 var(--s-5) !important;
       font-weight: 600;
+      font-size: 14px;
+      background: var(--brand) !important;
+      color: #fff !important;
+      border-radius: var(--r-md) !important;
+      border: none;
+      box-shadow: none !important;
+      transition: background var(--t-fast);
 
-      mat-icon {
-        margin-right: var(--space-2);
+      &:hover {
+        background: var(--brand-hover) !important;
       }
 
-      @media (max-width: 600px) {
-        width: 100%;
+      mat-icon {
+        margin-right: var(--s-1);
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
       }
     }
 
-    // Stats Grid
+    /* Stats Grid */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-5);
-      margin-bottom: var(--space-6);
-
-      @media (max-width: 900px) {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      @media (max-width: 600px) {
-        grid-template-columns: 1fr;
-      }
+      gap: var(--s-4);
+      margin-bottom: var(--s-6);
     }
 
     .stat-card {
-      border-radius: var(--radius-lg) !important;
-      border: none;
+      border-radius: var(--r-lg) !important;
+      border: 1px solid var(--border) !important;
+      box-shadow: var(--shadow-1) !important;
+      background: var(--surface) !important;
       overflow: hidden;
 
       mat-card-content {
         display: flex;
         align-items: center;
-        gap: var(--space-4);
-        padding: var(--space-5);
+        gap: var(--s-3);
+        padding: var(--s-4) var(--s-5) !important;
       }
     }
 
     .stat-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: var(--radius-md);
+      width: 44px;
+      height: 44px;
+      border-radius: var(--r-md);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      background: var(--brand-soft);
+      color: var(--brand);
 
       &.total {
-        background: var(--color-primary-50);
-        color: var(--color-primary);
+        background: var(--brand-soft);
+        color: var(--brand);
       }
 
       &.active {
-        background: #fff3e0;
-        color: var(--color-accent-dark);
+        background: var(--brand-soft);
+        color: var(--brand);
       }
 
       &.recovered {
-        background: #e8f5e9;
-        color: var(--color-success);
+        background: var(--brand-soft);
+        color: var(--brand);
+      }
+
+      svg {
+        width: 22px;
+        height: 22px;
       }
     }
 
@@ -384,83 +398,103 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
     }
 
     .stat-value {
-      font-size: 2rem;
+      font-size: 1.5rem;
       font-weight: 700;
-      color: var(--color-text-primary);
+      color: var(--text);
       line-height: 1.2;
     }
 
     .stat-label {
-      font-size: 0.9rem;
-      color: var(--color-text-muted);
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
     }
 
-    // Table Card
+    /* Table Card */
     .table-card {
-      border-radius: var(--radius-lg) !important;
+      border-radius: var(--r-lg) !important;
+      border: 1px solid var(--border) !important;
+      box-shadow: var(--shadow-1) !important;
+      background: var(--surface) !important;
       overflow: hidden;
-      margin-bottom: var(--space-8);
+      margin-bottom: var(--s-8);
     }
 
     .table-header {
-      padding: var(--space-5);
-      border-bottom: 1px solid var(--color-border-light);
+      padding: var(--s-5);
+      border-bottom: 1px solid var(--border);
 
       h2 {
-        font-size: 1.25rem;
+        font-size: 16px;
         font-weight: 600;
-        color: var(--color-text-primary);
-        margin-bottom: var(--space-4);
+        color: var(--text);
+        margin: 0 0 var(--s-4);
       }
     }
 
+    /* Filters */
     .filters {
       display: flex;
-      gap: var(--space-4);
+      gap: var(--s-3);
       flex-wrap: wrap;
       align-items: flex-start;
+    }
 
-      @media (max-width: 768px) {
-        flex-direction: column;
+    .search-field,
+    .status-field {
+      ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+        display: none;
+      }
+
+      ::ng-deep .mdc-notched-outline__leading,
+      ::ng-deep .mdc-notched-outline__notch,
+      ::ng-deep .mdc-notched-outline__trailing {
+        border-color: var(--border) !important;
+      }
+
+      ::ng-deep .mat-mdc-form-field-flex {
+        height: 40px;
+        align-items: center;
+      }
+
+      ::ng-deep .mat-mdc-text-field-wrapper {
+        padding: 0 12px;
       }
     }
 
     .search-field {
       flex: 1;
-      min-width: 250px;
-
-      @media (max-width: 768px) {
-        width: 100%;
-      }
+      min-width: 220px;
     }
 
     .status-field {
-      min-width: 180px;
-
-      @media (max-width: 768px) {
-        width: 100%;
-      }
+      min-width: 170px;
     }
 
     .reset-btn {
-      height: 56px;
-      padding: 0 var(--space-4);
+      height: 40px;
+      padding: 0 var(--s-3) !important;
+      font-size: 13px;
+      color: var(--text-2) !important;
+      border-color: var(--border) !important;
+      border-radius: var(--r-md) !important;
 
       mat-icon {
-        margin-right: var(--space-2);
-      }
-
-      @media (max-width: 768px) {
-        width: 100%;
+        margin-right: var(--s-1);
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
       }
     }
 
+    /* Loading */
     .loading-container {
-      padding: var(--space-10);
+      padding: var(--s-10);
       display: flex;
       justify-content: center;
     }
 
+    /* Table */
     .table-container {
       overflow-x: auto;
     }
@@ -471,136 +505,210 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
 
     .mat-mdc-header-cell {
       font-weight: 600;
-      color: var(--color-text-primary);
-      background: var(--color-primary-50);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted) !important;
+      background: var(--bg-subtle) !important;
+      border-bottom: 1px solid var(--border) !important;
     }
 
     .mat-mdc-row {
-      transition: background-color var(--transition-fast);
+      transition: background-color var(--t-fast);
+      border-bottom: 1px solid var(--border);
 
       &:hover {
-        background-color: rgba(0, 105, 62, 0.04);
+        background-color: var(--bg-subtle);
       }
     }
 
-    // Plate Badge
+    .mat-mdc-cell {
+      font-size: 14px;
+      color: var(--text-2);
+      border-bottom-color: var(--border) !important;
+    }
+
+    /* Plate Badge */
     .plate-badge {
       display: inline-block;
       font-family: 'Courier New', monospace;
-      font-weight: 600;
-      font-size: 0.9rem;
-      background: var(--color-primary-50);
-      color: var(--color-primary-dark);
-      padding: var(--space-1) var(--space-3);
-      border-radius: var(--radius-sm);
-      letter-spacing: 0.05em;
+      font-weight: 700;
+      font-size: 13px;
+      background: #1c1917;
+      color: #fef3c7;
+      padding: 3px 8px;
+      border-radius: var(--r-sm);
+      letter-spacing: 0.06em;
     }
 
-    // Vehicle Info
+    /* Vehicle Info */
     .vehicle-info {
       display: flex;
       flex-direction: column;
+      gap: 1px;
+      max-width: 160px;
+      overflow: hidden;
     }
 
     .vehicle-name {
       font-weight: 500;
-      color: var(--color-text-primary);
-    }
-
-    .vehicle-color {
-      font-size: 0.85rem;
-      color: var(--color-text-muted);
-    }
-
-    // Motif
-    .motif-text {
-      display: inline-block;
-      max-width: 180px;
+      font-size: 14px;
+      color: var(--text);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
-    // Status Badge
+    .vehicle-color {
+      font-size: 12px;
+      color: var(--text-muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Motif */
+    .motif-text {
+      display: inline-block;
+      max-width: 150px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 13px;
+      color: var(--text-2);
+    }
+
+    /* Status Badge */
     .status-badge {
       display: inline-flex;
       align-items: center;
-      gap: var(--space-1);
-      padding: var(--space-1) var(--space-3);
-      border-radius: var(--radius-full);
-      font-size: 0.85rem;
-      font-weight: 500;
+      gap: 4px;
+      padding: 0 10px;
+      height: 24px;
+      border-radius: var(--r-pill);
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
 
       mat-icon {
-        font-size: 16px;
-        width: 16px;
-        height: 16px;
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
       }
 
       &.status-active {
-        background: #fff3e0;
-        color: var(--color-accent-dark);
+        background: var(--brand-soft);
+        color: var(--brand);
       }
 
       &.status-recovered {
-        background: #e8f5e9;
-        color: var(--color-success);
+        background: #ecfdf5;
+        color: #166534;
       }
     }
 
-    // Action Buttons
+    /* Action Buttons — no transitions, instant */
     .action-buttons {
       display: flex;
       align-items: center;
+      gap: 0;
+      white-space: nowrap;
+      flex-shrink: 0;
 
       a, button {
-        color: var(--color-text-secondary);
-
-        &:hover {
-          color: var(--color-primary);
-        }
+        transition: none !important;
       }
     }
 
     .mat-column-actions {
-      width: 120px;
+      width: 140px;
+      min-width: 140px;
+      max-width: 140px;
+      overflow: visible !important;
+      text-overflow: clip !important;
+      padding-right: 8px !important;
     }
 
     ::ng-deep .success-icon {
-      color: var(--color-success) !important;
+      color: #166534 !important;
     }
 
     ::ng-deep .delete-action {
-      color: var(--color-warn) !important;
+      color: var(--brand) !important;
 
       mat-icon {
-        color: var(--color-warn) !important;
+        color: var(--brand) !important;
       }
     }
 
-    // No Data
+    /* No Data */
     .no-data-row td {
-      padding: var(--space-10) !important;
+      padding: var(--s-10) !important;
     }
 
     .no-data {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: var(--space-3);
-      color: var(--color-text-muted);
+      gap: var(--s-3);
+      color: var(--text-muted);
 
       mat-icon {
         font-size: 48px;
         width: 48px;
         height: 48px;
-        opacity: 0.5;
+        opacity: 0.4;
+      }
+
+      span {
+        font-size: 14px;
       }
     }
 
-    // Paginator
+    /* Paginator */
     mat-paginator {
-      border-top: 1px solid var(--color-border-light);
+      border-top: 1px solid var(--border);
+      background: transparent !important;
+
+      ::ng-deep .mat-mdc-paginator-container {
+        padding: var(--s-2) var(--s-4);
+        min-height: 48px;
+        font-size: 13px;
+        color: var(--text-muted);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .header-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .add-btn {
+        width: 100%;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .filters {
+        flex-direction: column;
+      }
+
+      .search-field,
+      .status-field,
+      .reset-btn {
+        width: 100%;
+        min-width: 0;
+      }
     }
   `]
 })
@@ -612,7 +720,7 @@ export class DashboardComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  displayedColumns = ['immatriculation', 'marque', 'dateEntree', 'motifEnlevement', 'recupere', 'actions'];
+  displayedColumns = ['immatriculation', 'marque', 'dateEntree', 'recupere', 'actions'];
   dataSource = new MatTableDataSource<Vehicule>([]);
   stats: Stats | null = null;
   loading = true;
