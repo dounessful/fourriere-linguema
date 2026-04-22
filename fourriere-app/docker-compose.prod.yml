@@ -101,6 +101,9 @@ services:
       API_HOSTNAME: ${API_HOSTNAME:?API_HOSTNAME required}
       KEYCLOAK_HOSTNAME: ${KEYCLOAK_HOSTNAME}
       ACME_EMAIL: ${ACME_EMAIL:?ACME_EMAIL required}
+      # IPs/CIDR autorisés à accéder à la console admin Keycloak (/admin/*)
+      # Séparateur : espace. Ex. "1.2.3.4 41.82.0.0/16"
+      ADMIN_TRUSTED_IPS: ${ADMIN_TRUSTED_IPS:-0.0.0.0/32}
     depends_on:
       - backend
       - keycloak
