@@ -41,22 +41,22 @@
         -Server
     }
 
-    # Console admin : accès restreint aux IP de confiance (ADMIN_TRUSTED_IPS)
+    # 1) IP de confiance (ADMIN_TRUSTED_IPS) : accès complet Keycloak
+    # (nécessaire pour la console admin qui utilise realms/master/*, resources/*, js/*)
     # Exemple .env : ADMIN_TRUSTED_IPS="154.125.133.177 41.82.0.0/16"
-    @kcAdmin path /admin*
-    handle @kcAdmin {
-        @adminTrusted remote_ip {$ADMIN_TRUSTED_IPS}
-        handle @adminTrusted {
-            reverse_proxy keycloak:8080 {
-                header_up Host {host}
-            }
-        }
-        handle {
-            respond "Administration interface not available publicly" 403
+    @adminTrusted remote_ip {$ADMIN_TRUSTED_IPS}
+    handle @adminTrusted {
+        reverse_proxy keycloak:8080 {
+            header_up Host {host}
         }
     }
 
-    # Endpoints publics nécessaires au client frontend
+    # 2) Accès public : uniquement les endpoints nécessaires au frontend
+    @kcAdmin path /admin*
+    handle @kcAdmin {
+        respond "Administration interface not available publicly" 403
+    }
+
     @kcAllowed {
         path /realms/fourriere/*
         path /resources/*
@@ -68,7 +68,7 @@
         }
     }
 
-    # Tout le reste : 404 (empêche /realms/master, /realms/master/..., etc.)
+    # 3) Tout le reste : 404 (bloque /realms/master/* et compagnie)
     handle {
         respond 404
     }
