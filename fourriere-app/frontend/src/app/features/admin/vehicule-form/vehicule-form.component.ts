@@ -14,8 +14,10 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { VehiculeService } from '../../../core/services/vehicule.service';
 import { FourriereService } from '../../../core/services/fourriere.service';
+import { CommuneService } from '../../../core/services/commune.service';
 import { Vehicule, VehiculeRequest, MotifEnlevement, MotifEnlevementLabels } from '../../../core/models/vehicule.model';
 import { Fourriere } from '../../../core/models/fourriere.model';
+import { Commune } from '../../../core/models/commune.model';
 import { CarteLeafletComponent } from '../../../shared/components/carte-leaflet/carte-leaflet.component';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 
@@ -116,6 +118,16 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
                       <mat-option [value]="motif.value">{{ motif.label }}</mat-option>
                     }
                   </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Commune d'autorité légale</mat-label>
+                  <mat-select [(ngModel)]="vehicule.communeId" name="communeId" required>
+                    @for (c of communes(); track c.id) {
+                      <mat-option [value]="c.id">{{ c.nom }}<ng-container *ngIf="c.region"> · {{ c.region }}</ng-container></mat-option>
+                    }
+                  </mat-select>
+                  <mat-hint>Commune sous l'autorité de laquelle le véhicule est mis en fourrière</mat-hint>
                 </mat-form-field>
               </mat-card-content>
             </mat-card>
@@ -378,6 +390,7 @@ export class VehiculeFormComponent implements OnInit {
   private router = inject(Router);
   private vehiculeService = inject(VehiculeService);
   private fourriereService = inject(FourriereService);
+  private communeService = inject(CommuneService);
   private snackBar = inject(MatSnackBar);
 
   @ViewChild(CarteLeafletComponent) carteLeaflet!: CarteLeafletComponent;
@@ -391,6 +404,7 @@ export class VehiculeFormComponent implements OnInit {
   dateEntree = new Date();
 
   fourrieres = signal<Fourriere[]>([]);
+  communes = signal<Commune[]>([]);
   selectedFourriere = signal<Fourriere | null>(null);
 
   vehicule: VehiculeRequest = {
@@ -401,13 +415,15 @@ export class VehiculeFormComponent implements OnInit {
     couleur: '',
     dateEntree: '',
     motifEnlevement: MotifEnlevement.STATIONNEMENT_INTERDIT,
-    fourriereId: 0
+    fourriereId: 0,
+    communeId: 0
   };
 
   motifs = Object.entries(MotifEnlevementLabels).map(([value, label]) => ({ value, label }));
 
   ngOnInit(): void {
     this.loadFourrieres();
+    this.loadCommunes();
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEdit = true;
@@ -426,6 +442,13 @@ export class VehiculeFormComponent implements OnInit {
     });
   }
 
+  private loadCommunes(): void {
+    this.communeService.getAllActive().subscribe({
+      next: (data) => this.communes.set(data),
+      error: () => this.snackBar.open('Erreur lors du chargement des communes', 'OK', { duration: 3000 })
+    });
+  }
+
   private loadVehicule(id: number): void {
     this.pageLoading = true;
     this.vehiculeService.getById(id).subscribe({
@@ -439,7 +462,8 @@ export class VehiculeFormComponent implements OnInit {
           couleur: v.couleur,
           dateEntree: v.dateEntree,
           motifEnlevement: v.motifEnlevement,
-          fourriereId: v.fourriereId || 0
+          fourriereId: v.fourriereId || 0,
+          communeId: v.communeId || 0
         };
         this.dateEntree = new Date(v.dateEntree);
 

@@ -14,9 +14,6 @@ public class EquipeRequest {
     @Size(max = 255, message = "La description ne peut pas dépasser 255 caractères")
     private String description;
 
-    @Size(max = 100, message = "La zone ne peut pas dépasser 100 caractères")
-    private String zone;
-
     private Long fourriereAssigneeId;
 
     private Boolean active = true;

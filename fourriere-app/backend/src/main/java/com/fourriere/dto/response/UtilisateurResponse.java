@@ -17,6 +17,8 @@ public class UtilisateurResponse {
     private String email;
     private String nom;
     private Role role;
+    private Long communeId;
+    private String communeNom;
     private Boolean actif;
     private LocalDateTime createdAt;
 }

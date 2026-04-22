@@ -29,11 +29,14 @@ export function initializeKeycloak(keycloak: KeycloakService): () => Promise<boo
       ]
     }).then((authenticated) => {
       keycloakInitialized = true;
-      console.log('Keycloak initialized, authenticated:', authenticated);
+      if (!environment.production) {
+        console.log('Keycloak initialized, authenticated:', authenticated);
+      }
       return authenticated;
     }).catch((error) => {
       keycloakInitialized = true; // Mark as initialized even on error
-      console.error('Keycloak initialization failed:', error);
+      // Éviter de logger l'objet d'erreur complet en prod (peut contenir du contexte sensible)
+      console.error('Keycloak initialization failed:', error?.message || 'unknown error');
       return false;
     });
 

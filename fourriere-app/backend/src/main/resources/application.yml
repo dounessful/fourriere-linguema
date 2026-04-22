@@ -11,29 +11,42 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8180/realms/fourriere
-          jwk-set-uri: http://localhost:8180/realms/fourriere/protocol/openid-connect/certs
+          issuer-uri: ${SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI:http://localhost:8280/realms/fourriere}
+          jwk-set-uri: ${SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI:http://localhost:8280/realms/fourriere/protocol/openid-connect/certs}
 
 server:
-  port: 8085
+  port: ${SERVER_PORT:8085}
+  # Honore les headers X-Forwarded-* quand on est derrière un proxy (Caddy / Cloudflare)
+  forward-headers-strategy: native
   error:
     include-message: always
-    include-binding-errors: always
+    include-binding-errors: never
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health
   endpoint:
     health:
-      show-details: when-authorized
+      show-details: never
       probes:
         enabled: true
 
+# Configuration du rate limiter
+rate-limit:
+  # Liste CSV des IP/CIDR des proxies de confiance (ex: CF edge) qui peuvent
+  # injecter X-Forwarded-For. Vide par défaut = aucun proxy de confiance.
+  trusted-proxies: ${RATE_LIMIT_TRUSTED_PROXIES:}
+  auth-per-minute: ${RATE_LIMIT_AUTH:5}
+  search-per-minute: ${RATE_LIMIT_SEARCH:30}
+  detail-per-minute: ${RATE_LIMIT_DETAIL:30}
+
 springdoc:
   api-docs:
+    enabled: ${SPRINGDOC_ENABLED:true}
     path: /api-docs
   swagger-ui:
+    enabled: ${SPRINGDOC_ENABLED:true}
     path: /swagger-ui.html
     operationsSorter: method

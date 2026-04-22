@@ -165,25 +165,39 @@ import { DateFrPipe } from '../../../shared/pipes/date-fr.pipe';
                     </dl>
                   </div>
 
-                  @if (vehicule.tarifJournalier && vehicule.coutEstime != null) {
+                  @if (vehicule.communeNom) {
                     <!-- Separator -->
                     <div class="combo-sep"></div>
 
-                    <!-- Part 2 : Frais -->
-                    <div class="combo-part combo-cost">
+                    <!-- Part 2 : Commune d'autorité -->
+                    <div class="combo-part combo-commune">
                       <div class="card-head">
                         <span class="card-icon">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M15 9h.01M9 13h.01M15 13h.01M9 17h.01M15 17h.01"/></svg>
                         </span>
-                        <h2>Frais à régler</h2>
+                        <h2>Commune d'autorité</h2>
                       </div>
-                      <div class="cost-amount">{{ vehicule.coutEstime | currency:'XOF':'symbol':'1.0-0':'fr' }}</div>
-                      <div class="cost-detail">
-                        <span class="mono">{{ vehicule.tarifJournalier | currency:'XOF':'symbol':'1.0-0':'fr' }}</span>
-                        <span class="x">×</span>
-                        <span class="mono">{{ vehicule.joursEnFourriere }} jr</span>
-                        <span class="cost-hint">· estimation indicative</span>
+                      <div class="commune-name">{{ vehicule.communeNom }}</div>
+                      @if (vehicule.communeRegion) {
+                        <div class="commune-region">{{ vehicule.communeRegion }}</div>
+                      }
+                      <div class="commune-meta">
+                        @if (vehicule.communeTelephone) {
+                          <span class="meta-row">
+                            <mat-icon>call</mat-icon>
+                            <a [href]="'tel:' + vehicule.communeTelephone">{{ vehicule.communeTelephone }}</a>
+                          </span>
+                        }
+                        @if (vehicule.communeEmail) {
+                          <span class="meta-row">
+                            <mat-icon>mail</mat-icon>
+                            <a [href]="'mailto:' + vehicule.communeEmail">{{ vehicule.communeEmail }}</a>
+                          </span>
+                        }
                       </div>
+                      <p class="commune-note">
+                        Pour toute réclamation ou information, adressez-vous à la commune de <strong>{{ vehicule.communeNom }}</strong>.
+                      </p>
                     </div>
                   }
                 </article>
@@ -513,28 +527,52 @@ import { DateFrPipe } from '../../../shared/pipes/date-fr.pipe';
       background: var(--border);
       margin: 0;
     }
-    .combo-cost {
+    .combo-commune {
       background: linear-gradient(135deg, #ffffff 0%, #fef2f2 100%);
     }
 
-    .cost-amount {
-      font-size: clamp(30px, 4vw, 38px);
+    .commune-name {
+      font-size: 18px;
       font-weight: 700;
-      letter-spacing: -0.025em;
       color: var(--brand-dark);
-      line-height: 1;
-      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+      margin-bottom: 2px;
     }
-    .cost-detail {
+    .commune-region {
       font-size: 12px;
       color: var(--text-muted);
+      margin-bottom: var(--s-3);
+    }
+    .commune-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: var(--s-3);
+    }
+    .commune-meta .meta-row {
       display: flex;
       align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-      .x { opacity: 0.6; padding: 0 2px; }
-      .cost-hint { color: var(--text-faint); }
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-2);
     }
+    .commune-meta .meta-row mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      color: var(--brand);
+    }
+    .commune-meta .meta-row a { color: var(--brand); }
+    .commune-note {
+      margin: 0;
+      padding: var(--s-3);
+      background: rgba(255, 255, 255, 0.65);
+      border-radius: var(--r-sm);
+      font-size: 12.5px;
+      color: var(--text-2);
+      line-height: 1.55;
+    }
+    .commune-note strong { color: var(--brand-dark); font-weight: 600; }
 
     /* Location card */
     .location-card {

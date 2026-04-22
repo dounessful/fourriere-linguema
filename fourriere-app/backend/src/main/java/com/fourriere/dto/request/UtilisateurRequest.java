@@ -24,5 +24,8 @@ public class UtilisateurRequest {
     @NotNull(message = "Le rôle est obligatoire")
     private Role role;
 
+    // Commune rattachée (obligatoire uniquement pour les agents de commune)
+    private Long communeId;
+
     private Boolean actif = true;
 }

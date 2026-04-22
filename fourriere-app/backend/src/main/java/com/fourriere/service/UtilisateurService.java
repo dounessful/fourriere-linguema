@@ -2,9 +2,13 @@ package com.fourriere.service;
 
 import com.fourriere.dto.request.UtilisateurRequest;
 import com.fourriere.dto.response.UtilisateurResponse;
+import com.fourriere.entity.Commune;
+import com.fourriere.entity.Role;
 import com.fourriere.entity.Utilisateur;
+import com.fourriere.exception.BadRequestException;
 import com.fourriere.exception.DuplicateResourceException;
 import com.fourriere.exception.ResourceNotFoundException;
+import com.fourriere.repository.CommuneRepository;
 import com.fourriere.repository.UtilisateurRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +23,7 @@ import java.util.List;
 public class UtilisateurService {
 
     private final UtilisateurRepository utilisateurRepository;
+    private final CommuneRepository communeRepository;
     private final PasswordEncoder passwordEncoder;
 
     public List<UtilisateurResponse> getAll() {
@@ -38,11 +43,14 @@ public class UtilisateurService {
             throw new DuplicateResourceException("Utilisateur", "email", request.getEmail());
         }
 
+        Commune commune = resolveCommune(request);
+
         Utilisateur utilisateur = Utilisateur.builder()
                 .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .password(passwordEncoder.encode(request.getPassword() != null ? request.getPassword() : "changeme"))
                 .nom(request.getNom())
                 .role(request.getRole())
+                .commune(commune)
                 .actif(request.getActif() != null ? request.getActif() : true)
                 .build();
 
@@ -62,6 +70,7 @@ public class UtilisateurService {
         utilisateur.setEmail(request.getEmail());
         utilisateur.setNom(request.getNom());
         utilisateur.setRole(request.getRole());
+        utilisateur.setCommune(resolveCommune(request));
 
         if (request.getActif() != null) {
             utilisateur.setActif(request.getActif());
@@ -73,6 +82,22 @@ public class UtilisateurService {
 
         Utilisateur saved = utilisateurRepository.save(utilisateur);
         return toResponse(saved);
+    }
+
+    private Commune resolveCommune(UtilisateurRequest request) {
+        if (request.getRole() == Role.AGENT_COMMUNE) {
+            if (request.getCommuneId() == null) {
+                throw new BadRequestException("La commune est obligatoire pour un agent de commune");
+            }
+            return communeRepository.findById(request.getCommuneId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Commune", "id", request.getCommuneId()));
+        }
+        // Pour ADMIN / SUPER_ADMIN : commune optionnelle (peut être null)
+        if (request.getCommuneId() != null) {
+            return communeRepository.findById(request.getCommuneId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Commune", "id", request.getCommuneId()));
+        }
+        return null;
     }
 
     public void delete(Long id) {
@@ -88,6 +113,8 @@ public class UtilisateurService {
                 .email(utilisateur.getEmail())
                 .nom(utilisateur.getNom())
                 .role(utilisateur.getRole())
+                .communeId(utilisateur.getCommune() != null ? utilisateur.getCommune().getId() : null)
+                .communeNom(utilisateur.getCommune() != null ? utilisateur.getCommune().getNom() : null)
                 .actif(utilisateur.getActif())
                 .createdAt(utilisateur.getCreatedAt())
                 .build();

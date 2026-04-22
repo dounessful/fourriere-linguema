@@ -39,6 +39,11 @@ public class Utilisateur {
     @JoinColumn(name = "equipe_id")
     private Equipe equipe;
 
+    // Commune rattachée (pour les agents de commune)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "commune_id")
+    private Commune commune;
+
     @Column(nullable = false)
     @Builder.Default
     private Boolean actif = true;

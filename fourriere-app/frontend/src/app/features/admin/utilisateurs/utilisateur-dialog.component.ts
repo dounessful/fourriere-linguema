@@ -10,7 +10,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { UtilisateurService } from '../../../core/services/utilisateur.service';
-import { Utilisateur, UtilisateurRequest, Role } from '../../../core/models/auth.model';
+import { CommuneService } from '../../../core/services/commune.service';
+import { Utilisateur, UtilisateurRequest, Role, RoleLabels } from '../../../core/models/auth.model';
+import { Commune } from '../../../core/models/commune.model';
 
 @Component({
   selector: 'app-utilisateur-dialog',
@@ -55,11 +57,23 @@ import { Utilisateur, UtilisateurRequest, Role } from '../../../core/models/auth
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Rôle</mat-label>
-          <mat-select [(ngModel)]="utilisateur.role" name="role" required>
+          <mat-select [(ngModel)]="utilisateur.role" name="role" required (selectionChange)="onRoleChange()">
             <mat-option [value]="Role.ADMIN">Admin</mat-option>
             <mat-option [value]="Role.SUPER_ADMIN">Super Admin</mat-option>
+            <mat-option [value]="Role.AGENT_COMMUNE">Agent de commune</mat-option>
           </mat-select>
         </mat-form-field>
+
+        @if (utilisateur.role === Role.AGENT_COMMUNE) {
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Commune rattachée</mat-label>
+            <mat-select [(ngModel)]="utilisateur.communeId" name="communeId" required>
+              @for (c of communes; track c.id) {
+                <mat-option [value]="c.id">{{ c.nom }}<ng-container *ngIf="c.region"> · {{ c.region }}</ng-container></mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        }
 
         <mat-checkbox [(ngModel)]="utilisateur.actif" name="actif">
           Compte actif
@@ -137,17 +151,20 @@ export class UtilisateurDialogComponent {
   dialogRef = inject(MatDialogRef<UtilisateurDialogComponent>);
   data: Utilisateur | null = inject(MAT_DIALOG_DATA);
   private utilisateurService = inject(UtilisateurService);
+  private communeService = inject(CommuneService);
   private snackBar = inject(MatSnackBar);
 
   Role = Role;
   isEdit: boolean;
   saving = false;
+  communes: Commune[] = [];
 
   utilisateur: UtilisateurRequest = {
     nom: '',
     email: '',
     password: '',
     role: Role.ADMIN,
+    communeId: undefined,
     actif: true
   };
 
@@ -159,8 +176,18 @@ export class UtilisateurDialogComponent {
         email: this.data.email,
         password: '',
         role: this.data.role,
+        communeId: this.data.communeId,
         actif: this.data.actif
       };
+    }
+    this.communeService.getAllActive().subscribe({
+      next: (list) => this.communes = list
+    });
+  }
+
+  onRoleChange(): void {
+    if (this.utilisateur.role !== Role.AGENT_COMMUNE) {
+      this.utilisateur.communeId = undefined;
     }
   }
 

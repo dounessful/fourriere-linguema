@@ -1,0 +1,74 @@
+# =====================================================================
+# Caddy reverse proxy — Linguema Fourrière (production)
+# - Terminaison TLS automatique via Let's Encrypt (ACME_EMAIL)
+# - Proxy vers backend et keycloak internes
+# - Headers de sécurité ajoutés
+# - Admin console Keycloak (/admin/*) bloquée depuis Internet
+# =====================================================================
+
+{
+    email {env.ACME_EMAIL}
+    # Journalisation propre
+    log {
+        output stdout
+        format console
+    }
+}
+
+# ----- Backend API -----------------------------------------------------
+{env.API_HOSTNAME} {
+    encode gzip zstd
+
+    # Headers de sécurité
+    header {
+        Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+        X-Content-Type-Options    "nosniff"
+        X-Frame-Options           "DENY"
+        Referrer-Policy           "strict-origin-when-cross-origin"
+        Permissions-Policy        "geolocation=(), camera=(), microphone=()"
+        -Server
+    }
+
+    reverse_proxy backend:8080 {
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+}
+
+# ----- Keycloak --------------------------------------------------------
+{env.KEYCLOAK_HOSTNAME} {
+    encode gzip zstd
+
+    header {
+        Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+        X-Content-Type-Options    "nosniff"
+        Referrer-Policy           "strict-origin-when-cross-origin"
+        -Server
+    }
+
+    # Blocage de la console admin Keycloak depuis Internet.
+    # Décommenter et ajuster avec vos IPs d'admin pour ouvrir sélectivement.
+    @kcAdmin {
+        path /admin*
+    }
+    respond @kcAdmin "Administration interface not available publicly" 403
+
+    # Autorisation explicite des endpoints publics nécessaires aux clients
+    @kcAllowed {
+        path /realms/fourriere/*
+        path /resources/*
+        path /js/*
+    }
+    handle @kcAllowed {
+        reverse_proxy keycloak:8080 {
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up Host {host}
+        }
+    }
+
+    # Tout le reste refusé (bloque /admin/master, /realms/master, etc.)
+    respond 404
+}

@@ -65,7 +65,6 @@ public class EquipeService {
         Equipe equipe = Equipe.builder()
                 .nom(request.getNom())
                 .description(request.getDescription())
-                .zone(request.getZone())
                 .active(request.getActive() != null ? request.getActive() : true)
                 .build();
 
@@ -91,7 +90,6 @@ public class EquipeService {
 
         equipe.setNom(request.getNom());
         equipe.setDescription(request.getDescription());
-        equipe.setZone(request.getZone());
         if (request.getActive() != null) {
             equipe.setActive(request.getActive());
         }
@@ -128,7 +126,6 @@ public class EquipeService {
                 .id(equipe.getId())
                 .nom(equipe.getNom())
                 .description(equipe.getDescription())
-                .zone(equipe.getZone())
                 .fourriereAssigneeId(equipe.getFourriereAssignee() != null ? equipe.getFourriereAssignee().getId() : null)
                 .fourriereAssigneeNom(equipe.getFourriereAssignee() != null ? equipe.getFourriereAssignee().getNom() : null)
                 .active(equipe.getActive())

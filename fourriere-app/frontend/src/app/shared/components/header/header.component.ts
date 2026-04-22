@@ -35,12 +35,17 @@ import { AuthService } from '../../../core/services/auth.service';
 
         @if (authService.isAuthenticated()) {
           <nav class="nav">
-            <a routerLink="/admin/dashboard" routerLinkActive="active" class="nav-link">Dashboard</a>
-            <a routerLink="/admin/transferts" routerLinkActive="active" class="nav-link">Transferts</a>
-            @if (authService.isSuperAdmin()) {
-              <a routerLink="/admin/fourrieres" routerLinkActive="active" class="nav-link">Fourrières</a>
-              <a routerLink="/admin/equipes" routerLinkActive="active" class="nav-link">Équipes</a>
-              <a routerLink="/admin/utilisateurs" routerLinkActive="active" class="nav-link">Utilisateurs</a>
+            @if (authService.isOnlyAgent()) {
+              <a routerLink="/agent/vehicules" routerLinkActive="active" class="nav-link">Mes véhicules</a>
+            } @else {
+              <a routerLink="/admin/dashboard" routerLinkActive="active" class="nav-link">Dashboard</a>
+              <a routerLink="/admin/transferts" routerLinkActive="active" class="nav-link">Transferts</a>
+              @if (authService.isSuperAdmin()) {
+                <a routerLink="/admin/fourrieres" routerLinkActive="active" class="nav-link">Fourrières</a>
+                <a routerLink="/admin/equipes" routerLinkActive="active" class="nav-link">Équipes</a>
+                <a routerLink="/admin/communes" routerLinkActive="active" class="nav-link">Communes</a>
+                <a routerLink="/admin/utilisateurs" routerLinkActive="active" class="nav-link">Utilisateurs</a>
+              }
             }
           </nav>
         }
@@ -63,6 +68,8 @@ import { AuthService } from '../../../core/services/auth.service';
                       <span class="role-badge role-super">Super Admin</span>
                     } @else if (authService.isAdmin()) {
                       <span class="role-badge role-admin">Admin</span>
+                    } @else if (authService.isAgentCommune()) {
+                      <span class="role-badge role-admin">Agent de commune</span>
                     }
                   </div>
                 </div>

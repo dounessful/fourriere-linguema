@@ -5,13 +5,23 @@ import com.fourriere.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Seed de données de test.
+ *
+ * Désactivé par défaut. Pour activer (uniquement en dev local) :
+ *   application.yml → app.seed.enabled: true
+ * ou variable d'env :
+ *   APP_SEED_ENABLED=true
+ */
 @Component
+@ConditionalOnProperty(name = "app.seed.enabled", havingValue = "true")
 @RequiredArgsConstructor
 @Slf4j
 public class DataInitializer implements CommandLineRunner {
@@ -20,13 +30,53 @@ public class DataInitializer implements CommandLineRunner {
     private final FourriereRepository fourriereRepository;
     private final EquipeRepository equipeRepository;
     private final UtilisateurRepository utilisateurRepository;
+    private final CommuneRepository communeRepository;
 
     @Override
     public void run(String... args) {
+        initCommunes();
         initFourrieres();
         initEquipes();
         initUtilisateurs();
         initVehicules();
+    }
+
+    private void initCommunes() {
+        if (communeRepository.count() > 0) return;
+        List<Commune> communes = List.of(
+            Commune.builder().nom("Dakar-Plateau").region("Dakar")
+                .telephone("+221 33 823 01 02").email("plateau@ville-dakar.sn")
+                .adresse("Hôtel de ville, Plateau").active(true).build(),
+            Commune.builder().nom("Médina").region("Dakar")
+                .telephone("+221 33 821 45 78").email("medina@ville-dakar.sn")
+                .adresse("Mairie de Médina").active(true).build(),
+            Commune.builder().nom("Grand-Yoff").region("Dakar")
+                .telephone("+221 33 869 11 22").email("grandyoff@ville-dakar.sn")
+                .adresse("Mairie de Grand-Yoff").active(true).build(),
+            Commune.builder().nom("Parcelles Assainies").region("Dakar")
+                .telephone("+221 33 855 90 33").email("parcelles@ville-dakar.sn")
+                .adresse("Unité 17, Parcelles Assainies").active(true).build(),
+            Commune.builder().nom("Pikine").region("Dakar")
+                .telephone("+221 33 834 55 10").email("contact@pikine.sn")
+                .adresse("Mairie de Pikine").active(true).build(),
+            Commune.builder().nom("Guédiawaye").region("Dakar")
+                .telephone("+221 33 837 20 88").email("contact@guediawaye.sn")
+                .adresse("Mairie de Guédiawaye").active(true).build(),
+            Commune.builder().nom("Rufisque").region("Dakar")
+                .telephone("+221 33 836 11 00").email("contact@rufisque.sn")
+                .adresse("Mairie de Rufisque").active(true).build(),
+            Commune.builder().nom("Thiès").region("Thiès")
+                .telephone("+221 33 951 10 30").email("contact@thies.sn")
+                .adresse("Mairie de Thiès").active(true).build(),
+            Commune.builder().nom("Saint-Louis").region("Saint-Louis")
+                .telephone("+221 33 961 20 50").email("contact@saintlouis.sn")
+                .adresse("Hôtel de ville, Saint-Louis").active(true).build(),
+            Commune.builder().nom("Kaolack").region("Kaolack")
+                .telephone("+221 33 941 15 20").email("contact@kaolack.sn")
+                .adresse("Mairie de Kaolack").active(true).build()
+        );
+        communeRepository.saveAll(communes);
+        log.info("{} communes de test créées", communes.size());
     }
 
     private void initFourrieres() {
@@ -130,7 +180,6 @@ public class DataInitializer implements CommandLineRunner {
                 Equipe.builder()
                     .nom("Équipe Téranga")
                     .description("Équipe d'intervention zone Plateau-Centre")
-                    .zone("Dakar Plateau")
                     .fourriereAssignee(fourrieres.get(0))
                     .active(true)
                     .build(),
@@ -138,7 +187,6 @@ public class DataInitializer implements CommandLineRunner {
                 Equipe.builder()
                     .nom("Équipe Baobab")
                     .description("Équipe d'intervention zone Médina-Fass")
-                    .zone("Dakar Médina")
                     .fourriereAssignee(fourrieres.get(1))
                     .active(true)
                     .build(),
@@ -146,7 +194,6 @@ public class DataInitializer implements CommandLineRunner {
                 Equipe.builder()
                     .nom("Équipe Djolof")
                     .description("Équipe d'intervention zone Parcelles-Guédiawaye")
-                    .zone("Dakar Nord")
                     .fourriereAssignee(fourrieres.get(2))
                     .active(true)
                     .build(),
@@ -154,7 +201,6 @@ public class DataInitializer implements CommandLineRunner {
                 Equipe.builder()
                     .nom("Équipe Cayor")
                     .description("Équipe d'intervention zone Pikine-Rufisque")
-                    .zone("Banlieue Dakar")
                     .fourriereAssignee(fourrieres.get(3))
                     .active(true)
                     .build(),
@@ -162,7 +208,6 @@ public class DataInitializer implements CommandLineRunner {
                 Equipe.builder()
                     .nom("Équipe Rail")
                     .description("Équipe d'intervention région Thiès")
-                    .zone("Thiès")
                     .fourriereAssignee(fourrieres.get(4))
                     .active(true)
                     .build(),
@@ -170,7 +215,6 @@ public class DataInitializer implements CommandLineRunner {
                 Equipe.builder()
                     .nom("Équipe Ndar")
                     .description("Équipe d'intervention région Saint-Louis")
-                    .zone("Saint-Louis")
                     .fourriereAssignee(fourrieres.get(5))
                     .active(true)
                     .build()
@@ -184,6 +228,7 @@ public class DataInitializer implements CommandLineRunner {
     private void initUtilisateurs() {
         if (utilisateurRepository.count() == 0) {
             List<Equipe> equipes = equipeRepository.findAll();
+            List<Commune> communes = communeRepository.findAll();
 
             List<Utilisateur> utilisateurs = List.of(
                 Utilisateur.builder()
@@ -237,6 +282,34 @@ public class DataInitializer implements CommandLineRunner {
                     .role(Role.ADMIN)
                     .equipe(equipes.get(5))
                     .actif(true)
+                    .build(),
+
+                // Agents de commune — lecture seule, rattachés à leur commune
+                Utilisateur.builder()
+                    .email("agent.plateau@linguema.sn")
+                    .password("$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG")
+                    .nom("Moussa Sarr")
+                    .role(Role.AGENT_COMMUNE)
+                    .commune(communes.get(0)) // Dakar-Plateau
+                    .actif(true)
+                    .build(),
+
+                Utilisateur.builder()
+                    .email("agent.medina@linguema.sn")
+                    .password("$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG")
+                    .nom("Awa Cissé")
+                    .role(Role.AGENT_COMMUNE)
+                    .commune(communes.get(1)) // Médina
+                    .actif(true)
+                    .build(),
+
+                Utilisateur.builder()
+                    .email("agent.thies@linguema.sn")
+                    .password("$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG")
+                    .nom("Cheikh Gueye")
+                    .role(Role.AGENT_COMMUNE)
+                    .commune(communes.get(7)) // Thiès
+                    .actif(true)
                     .build()
             );
 
@@ -249,6 +322,7 @@ public class DataInitializer implements CommandLineRunner {
         if (vehiculeRepository.count() == 0) {
             List<Fourriere> fourrieres = fourriereRepository.findAll();
             List<Equipe> equipes = equipeRepository.findAll();
+            List<Commune> communes = communeRepository.findAll();
 
             List<Vehicule> vehicules = List.of(
                 Vehicule.builder()
@@ -259,6 +333,7 @@ public class DataInitializer implements CommandLineRunner {
                     .couleur("Blanc")
                     .motifEnlevement(MotifEnlevement.STATIONNEMENT_INTERDIT)
                     .fourriere(fourrieres.get(0))
+                    .commune(communes.get(0))
                     .equipeAjout(equipes.get(0))
                     .telephone(fourrieres.get(0).getTelephone())
                     .latitude(fourrieres.get(0).getLatitude())
@@ -275,6 +350,7 @@ public class DataInitializer implements CommandLineRunner {
                     .couleur("Gris")
                     .motifEnlevement(MotifEnlevement.STATIONNEMENT_INTERDIT)
                     .fourriere(fourrieres.get(1))
+                    .commune(communes.get(1))
                     .equipeAjout(equipes.get(1))
                     .telephone(fourrieres.get(1).getTelephone())
                     .latitude(fourrieres.get(1).getLatitude())
@@ -291,6 +367,7 @@ public class DataInitializer implements CommandLineRunner {
                     .couleur("Noir")
                     .motifEnlevement(MotifEnlevement.EPAVE)
                     .fourriere(fourrieres.get(2))
+                    .commune(communes.get(3))
                     .equipeAjout(equipes.get(2))
                     .telephone(fourrieres.get(2).getTelephone())
                     .latitude(fourrieres.get(2).getLatitude())
@@ -307,6 +384,7 @@ public class DataInitializer implements CommandLineRunner {
                     .couleur("Blanc")
                     .motifEnlevement(MotifEnlevement.ACCIDENT)
                     .fourriere(fourrieres.get(3))
+                    .commune(communes.get(4))
                     .equipeAjout(equipes.get(3))
                     .telephone(fourrieres.get(3).getTelephone())
                     .latitude(fourrieres.get(3).getLatitude())
@@ -323,6 +401,7 @@ public class DataInitializer implements CommandLineRunner {
                     .couleur("Rouge")
                     .motifEnlevement(MotifEnlevement.INFRACTION)
                     .fourriere(fourrieres.get(0))
+                    .commune(communes.get(0))
                     .equipeAjout(equipes.get(0))
                     .telephone(fourrieres.get(0).getTelephone())
                     .latitude(fourrieres.get(0).getLatitude())
@@ -341,6 +420,7 @@ public class DataInitializer implements CommandLineRunner {
                     .couleur("Bleu")
                     .motifEnlevement(MotifEnlevement.AUTRE)
                     .fourriere(fourrieres.get(4))
+                    .commune(communes.get(7))
                     .equipeAjout(equipes.get(4))
                     .telephone(fourrieres.get(4).getTelephone())
                     .latitude(fourrieres.get(4).getLatitude())
@@ -357,6 +437,7 @@ public class DataInitializer implements CommandLineRunner {
                     .couleur("Argent")
                     .motifEnlevement(MotifEnlevement.STATIONNEMENT_INTERDIT)
                     .fourriere(fourrieres.get(5))
+                    .commune(communes.get(8))
                     .equipeAjout(equipes.get(5))
                     .telephone(fourrieres.get(5).getTelephone())
                     .latitude(fourrieres.get(5).getLatitude())
@@ -373,6 +454,7 @@ public class DataInitializer implements CommandLineRunner {
                     .couleur("Jaune")
                     .motifEnlevement(MotifEnlevement.INFRACTION)
                     .fourriere(fourrieres.get(1))
+                    .commune(communes.get(1))
                     .equipeAjout(equipes.get(1))
                     .telephone(fourrieres.get(1).getTelephone())
                     .latitude(fourrieres.get(1).getLatitude())
@@ -389,6 +471,7 @@ public class DataInitializer implements CommandLineRunner {
                     .couleur("Vert")
                     .motifEnlevement(MotifEnlevement.AUTRE)
                     .fourriere(fourrieres.get(2))
+                    .commune(communes.get(3))
                     .equipeAjout(equipes.get(2))
                     .telephone(fourrieres.get(2).getTelephone())
                     .latitude(fourrieres.get(2).getLatitude())
@@ -405,6 +488,7 @@ public class DataInitializer implements CommandLineRunner {
                     .couleur("Bordeaux")
                     .motifEnlevement(MotifEnlevement.ACCIDENT)
                     .fourriere(fourrieres.get(3))
+                    .commune(communes.get(4))
                     .equipeAjout(equipes.get(3))
                     .telephone(fourrieres.get(3).getTelephone())
                     .latitude(fourrieres.get(3).getLatitude())

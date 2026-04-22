@@ -1,6 +1,8 @@
 spring:
   datasource:
     url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -14,11 +16,6 @@ spring:
     locations: classpath:db/migration
     baseline-on-migrate: false
 
-jwt:
-  secret: ${JWT_SECRET}
-  access-expiration: 900000
-  refresh-expiration: 604800000
-
 cloudinary:
   cloud-name: ${CLOUDINARY_CLOUD_NAME}
   api-key: ${CLOUDINARY_API_KEY}
@@ -27,7 +24,15 @@ cloudinary:
 cors:
   allowed-origins: ${FRONTEND_URL}
 
+# Swagger désactivé en production
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
 logging:
   level:
     com.fourriere: INFO
     org.springframework.security: WARN
+    org.hibernate: WARN

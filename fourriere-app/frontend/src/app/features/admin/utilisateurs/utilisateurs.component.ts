@@ -62,10 +62,17 @@ import { DateFrPipe } from '../../../shared/pipes/date-fr.pipe';
                 <td mat-cell *matCellDef="let u">
                   @if (u.role === 'SUPER_ADMIN') {
                     <mat-chip color="primary" selected>Super Admin</mat-chip>
+                  } @else if (u.role === 'AGENT_COMMUNE') {
+                    <mat-chip>Agent commune</mat-chip>
                   } @else {
                     <mat-chip>Admin</mat-chip>
                   }
                 </td>
+              </ng-container>
+
+              <ng-container matColumnDef="commune">
+                <th mat-header-cell *matHeaderCellDef>Commune</th>
+                <td mat-cell *matCellDef="let u">{{ u.communeNom || '—' }}</td>
               </ng-container>
 
               <ng-container matColumnDef="actif">
@@ -262,7 +269,7 @@ export class UtilisateursComponent implements OnInit {
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
 
-  displayedColumns = ['nom', 'email', 'role', 'actif', 'actions'];
+  displayedColumns = ['nom', 'email', 'role', 'commune', 'actif', 'actions'];
   utilisateurs: Utilisateur[] = [];
   loading = true;
 

@@ -39,6 +39,9 @@ public class VehiculeRequest {
     @NotNull(message = "La fourrière est obligatoire")
     private Long fourriereId;
 
+    @NotNull(message = "La commune est obligatoire")
+    private Long communeId;
+
     // Champs conservés pour rétrocompatibilité (optionnels si fourriereId est fourni)
     private String adresseFourriere;
     private String nomFourriere;

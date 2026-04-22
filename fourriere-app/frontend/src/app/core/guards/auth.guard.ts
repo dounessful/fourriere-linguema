@@ -28,8 +28,6 @@ export const authGuard: CanActivateFn = async (
   const roles = extractRoles(tokenParsed);
 
   if (!roles.includes('ADMIN') && !roles.includes('SUPER_ADMIN')) {
-    // User is authenticated but doesn't have required roles
-    console.warn('User does not have required roles (ADMIN or SUPER_ADMIN)');
     router.navigate(['/']);
     return false;
   }

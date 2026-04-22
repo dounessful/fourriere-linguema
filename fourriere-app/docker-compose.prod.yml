@@ -1,0 +1,114 @@
+# =====================================================================
+# DOCKER COMPOSE DE PRODUCTION (Hetzner)
+# Frontend NON inclus : il est servi depuis Cloudflare Pages.
+#
+# Pré-requis :
+#   - Fichier .env à la racine (voir .env.example)
+#   - DNS api.fourriere.sn et auth.fourriere.sn pointant vers l'IP du serveur
+#   - Ports 80 et 443 ouverts (Caddy) ; tout le reste en interne.
+#
+# Démarrage :
+#   docker compose -f docker-compose.prod.yml --env-file .env up -d
+# =====================================================================
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: fourriere-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB required}
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER required}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD required}
+    volumes:
+      - fourriere_postgres_data:/var/lib/postgresql/data
+      - ./init-keycloak-db.sql:/docker-entrypoint-initdb.d/init-keycloak-db.sql
+    # PAS de ports exposés : accès uniquement depuis le réseau Docker interne
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    container_name: fourriere-keycloak
+    restart: unless-stopped
+    command: start --optimized
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak_db
+      KC_DB_USERNAME: ${POSTGRES_USER}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      KC_HOSTNAME: ${KEYCLOAK_HOSTNAME:?KEYCLOAK_HOSTNAME required}
+      KC_HOSTNAME_STRICT: true
+      KC_HOSTNAME_STRICT_HTTPS: true
+      KC_HTTP_ENABLED: true
+      KC_PROXY: edge
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:?KEYCLOAK_ADMIN required}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?KEYCLOAK_ADMIN_PASSWORD required}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - internal
+
+  backend:
+    image: fourriere-backend:latest
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: fourriere-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DATABASE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      DATABASE_USERNAME: ${POSTGRES_USER}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: https://${KEYCLOAK_HOSTNAME}/realms/fourriere
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: http://keycloak:8080/realms/fourriere/protocol/openid-connect/certs
+      FRONTEND_URL: ${FRONTEND_URL:?FRONTEND_URL required}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:?CLOUDINARY_CLOUD_NAME required}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:?CLOUDINARY_API_KEY required}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:?CLOUDINARY_API_SECRET required}
+      # Rate limit : IP(s) des proxies de confiance (Caddy container + edges Cloudflare)
+      # Caddy tourne sur le même host et reverse-proxy vers backend → remote addr = 172.x
+      RATE_LIMIT_TRUSTED_PROXIES: ${RATE_LIMIT_TRUSTED_PROXIES:-}
+    networks:
+      - internal
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: fourriere-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    environment:
+      API_HOSTNAME: ${API_HOSTNAME:?API_HOSTNAME required}
+      KEYCLOAK_HOSTNAME: ${KEYCLOAK_HOSTNAME}
+      ACME_EMAIL: ${ACME_EMAIL:?ACME_EMAIL required}
+    depends_on:
+      - backend
+      - keycloak
+    networks:
+      - internal
+
+networks:
+  internal:
+    driver: bridge
+
+volumes:
+  fourriere_postgres_data:
+  caddy_data:
+  caddy_config:

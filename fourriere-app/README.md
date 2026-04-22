@@ -1,136 +1,128 @@
-# Application de Gestion de Fourrière
+# Linguema Fourrière
 
-Application web de gestion de fourrière automobile permettant aux citoyens de rechercher leur véhicule et aux administrateurs de gérer les entrées/sorties.
+Application de gestion des véhicules en fourrière au Sénégal. Parcours public de recherche par plaque + back-office admin + espace agent de commune (RLS).
 
-## Stack Technique
+**Domaine de production : `fourriere.sn`** (géré chez OVHcloud Sénégal).
 
-### Backend
-- Java 21 + Spring Boot 3.2
-- Spring Security 6 avec JWT
-- Spring Data JPA + PostgreSQL
-- Cloudinary pour le stockage des images
-- Swagger/OpenAPI pour la documentation
+## Stack
 
-### Frontend
-- Angular 17+ (Standalone Components)
-- Angular Material
-- Leaflet pour les cartes
+- **Backend** : Java 17, Spring Boot 3.2, Spring Security (OAuth2 Resource Server + JWT Keycloak), Spring Data JPA, PostgreSQL 16, Flyway, Bucket4j + Caffeine (rate limit), Cloudinary (uploads).
+- **Frontend** : Angular 17 (standalone), Angular Material, Leaflet, keycloak-angular.
+- **Auth** : Keycloak 24.
+- **Infra prod** : Cloudflare Pages (frontend) + Hetzner VM avec Caddy (backend + Keycloak + Postgres).
 
-## Prérequis
+## Développement local
 
-- Java 21+
-- Node.js 18+
-- Docker & Docker Compose (pour le développement local)
-- Compte Cloudinary (pour l'upload des images)
+### Prérequis
+- Docker Desktop
+- Java 17 + Maven (pour rebuild rapide du backend)
+- Node.js 20+ (pour rebuild rapide du frontend)
 
-## Installation et lancement en développement
-
-### 1. Cloner le projet
+### Démarrage
 
 ```bash
-git clone <url-du-repo>
 cd fourriere-app
+docker compose up -d
 ```
 
-### 2. Démarrer PostgreSQL avec Docker
+Services après quelques dizaines de secondes :
 
-```bash
-docker-compose up -d postgres
-```
+| Service | URL | Identifiants |
+|---|---|---|
+| Frontend | http://localhost:4202 | — |
+| Backend API | http://localhost:8086 | — |
+| Swagger UI | http://localhost:8086/swagger-ui.html | — |
+| Keycloak admin | http://localhost:8280 | admin / admin (dev uniquement) |
+| pgAdmin | http://localhost:5051 | admin@fourriere.com / admin123 |
 
-### 3. Démarrer le Backend
+### Workflow de développement
 
+**Changement backend** :
 ```bash
 cd backend
-./mvnw spring-boot:run
+mvn clean package -DskipTests
+cd ..
+docker compose up -d --build backend
 ```
 
-Le backend sera accessible sur http://localhost:8080
-
-**Swagger UI** : http://localhost:8080/swagger-ui.html
-
-### 4. Démarrer le Frontend
-
+**Changement frontend** :
 ```bash
 cd frontend
-npm install
-npm start
+npm run build:prod
+cd ..
+docker compose up -d --build frontend
 ```
 
-Le frontend sera accessible sur http://localhost:4200
+**Reset complet de la base** :
+```bash
+docker compose down -v
+docker compose up -d
+```
 
-## Identifiants par défaut
+### Configuration initiale
 
-Un super administrateur est créé automatiquement au premier démarrage :
+Le realm Keycloak `fourriere` est importé automatiquement au premier démarrage (rôles `ADMIN`, `SUPER_ADMIN`, `AGENT_COMMUNE`).
 
-- **Email** : admin@fourriere.com
-- **Mot de passe** : admin123
+**Aucune donnée applicative n'est seedée.** La base est vide après `docker compose up -d`. Pour créer les premiers utilisateurs et données de référence :
+- Voir [KEYCLOAK_SETUP.md](./KEYCLOAK_SETUP.md) pour la configuration des comptes Keycloak
+- Puis se connecter comme `SUPER_ADMIN` et créer communes, fourrières, équipes, utilisateurs via l'interface admin
 
-## Configuration
+> **Seed de test (dev uniquement)** : il reste possible d'activer un jeu de données factice pour les tests locaux. Ajouter `APP_SEED_ENABLED=true` dans les variables d'environnement du backend. Ne JAMAIS activer en production.
 
-### Variables d'environnement Backend (Production)
+---
 
-| Variable | Description |
-|----------|-------------|
-| `DATABASE_URL` | URL de connexion PostgreSQL |
-| `JWT_SECRET` | Clé secrète pour les tokens JWT (min 256 bits) |
-| `CLOUDINARY_CLOUD_NAME` | Nom du cloud Cloudinary |
-| `CLOUDINARY_API_KEY` | Clé API Cloudinary |
-| `CLOUDINARY_API_SECRET` | Secret API Cloudinary |
-| `FRONTEND_URL` | URL du frontend (pour CORS) |
+## Documentation
 
-### Variables d'environnement Frontend (Production)
+| Fichier | Contenu |
+|---|---|
+| **[DEPLOYMENT.md](./DEPLOYMENT.md)** | Guide complet de déploiement production (Hetzner + Cloudflare Pages + DNS OVH), pas-à-pas avec commandes exactes |
+| **[KEYCLOAK_SETUP.md](./KEYCLOAK_SETUP.md)** | Configuration manuelle du realm Keycloak, utilisateurs, politique mot de passe, MFA |
+| **[.env.example](./.env.example)** | Template des variables d'environnement requises en production |
+| **[Caddyfile](./Caddyfile)** | Configuration du reverse proxy Caddy (TLS, headers sécurité) |
 
-Modifier `src/environments/environment.prod.ts` avec l'URL de l'API backend.
+### Architecture de production (vue d'ensemble)
 
-## Déploiement
+```
+                        Internet
+                           │
+                  ┌────────┴────────┐
+                  ▼                 ▼
+         Cloudflare Pages    Hetzner VM (Caddy TLS)
+         www.fourriere.sn    api.fourriere.sn  ─► backend    (interne)
+                             auth.fourriere.sn ─► keycloak   (interne)
+                                                 postgres   (jamais exposé)
+```
 
-### Backend sur Render
+- **Frontend** : statique, servi par Cloudflare Pages (CDN + HTTPS + build auto depuis GitHub)
+- **Backend + Keycloak + PostgreSQL** : Docker Compose sur une VM Hetzner dédiée
+- **Caddy** : reverse proxy, TLS automatique via Let's Encrypt, headers de sécurité
 
-1. Créer un nouveau Web Service
-2. Connecter le repository Git
-3. Sélectionner "Docker" comme environnement
-4. Configurer les variables d'environnement
-5. Déployer
+---
 
-### Frontend sur Vercel
+## Sécurité — état actuel
 
-1. Importer le projet depuis Git
-2. Sélectionner le dossier `frontend` comme root
-3. Build command : `npm run build:prod`
-4. Output directory : `dist/fourriere-frontend`
-5. Déployer
+✅ Appliqué :
+- JWT Keycloak (bearer-only backend, PKCE frontend)
+- Flyway `validate` en prod (pas de ddl-auto)
+- Rate limit Bucket4j + Caffeine (éviction mémoire automatique, trust X-Forwarded-For configurable)
+- CORS headers restreints (Authorization, Content-Type, Accept, X-Requested-With, Origin)
+- Swagger désactivé en prod
+- `/actuator/info` non exposé
+- Headers sécurité via Caddy + `_headers` Cloudflare Pages (HSTS, CSP, Referrer-Policy, Permissions-Policy)
+- Secrets tous en variables d'environnement (rien dans Git)
+- Realm JSON sans users ni client secret
+- `forward-headers-strategy: native` côté Spring
+- Seed de données désactivé par défaut
 
-## API Endpoints
+⚠️ À compléter post-déploiement :
+- Politique de mot de passe Keycloak (manuel console — voir [KEYCLOAK_SETUP.md](./KEYCLOAK_SETUP.md))
+- MFA sur compte master Keycloak
+- CAPTCHA (Cloudflare Turnstile) sur la recherche publique
+- Monitoring / alerting (401 / 403 anormaux)
+- Tests de sécurité automatisés (OWASP ZAP)
 
-### Publics
-- `GET /api/vehicules/recherche?immatriculation=XX-XXX-XX` - Rechercher un véhicule
-- `GET /api/vehicules/{id}` - Détail d'un véhicule
-- `POST /api/auth/login` - Connexion
-- `POST /api/auth/refresh` - Rafraîchir le token
+---
 
-### Admin (authentification requise)
-- `GET /api/admin/vehicules` - Liste paginée des véhicules
-- `POST /api/admin/vehicules` - Créer un véhicule
-- `PUT /api/admin/vehicules/{id}` - Modifier un véhicule
-- `DELETE /api/admin/vehicules/{id}` - Supprimer un véhicule
-- `POST /api/admin/vehicules/{id}/photos` - Ajouter une photo
-- `PATCH /api/admin/vehicules/{id}/sortie` - Marquer comme récupéré
+## Licence
 
-### Super Admin
-- `GET /api/admin/utilisateurs` - Liste des utilisateurs
-- `POST /api/admin/utilisateurs` - Créer un utilisateur
-- `PUT /api/admin/utilisateurs/{id}` - Modifier un utilisateur
-- `DELETE /api/admin/utilisateurs/{id}` - Supprimer un utilisateur
-
-## Sécurité
-
-- Authentification JWT avec access token (15 min) et refresh token (7 jours)
-- Rate limiting sur les endpoints d'authentification et de recherche
-- Headers de sécurité (XSS, CSRF, Frame Options)
-- Validation stricte des entrées
-- Normalisation des plaques d'immatriculation
-
-## License
-
-MIT
+Propriétaire — Linguema Assistance Routière.

@@ -38,6 +38,14 @@ public class VehiculeResponse {
     private Long equipeId;
     private String equipeNom;
 
+    // Commune d'autorité légale
+    private Long communeId;
+    private String communeNom;
+    private String communeRegion;
+    private String communeTelephone;
+    private String communeEmail;
+    private String communeAdresse;
+
     private List<String> photos;
     private BigDecimal tarifJournalier;
     private Boolean recupere;

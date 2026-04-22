@@ -2,14 +2,19 @@ package com.fourriere.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fourriere.dto.response.ErrorResponse;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Refill;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
@@ -19,16 +24,68 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
+/**
+ * Rate limiter basé sur l'IP client.
+ *
+ * - Cache Caffeine avec éviction (expireAfterAccess 10 min) → pas de fuite mémoire
+ * - Trust de X-Forwarded-For uniquement depuis les proxies configurés (liste CSV
+ *   dans rate-limit.trusted-proxies, par défaut vide = pas de confiance).
+ * - Endpoints protégés :
+ *     /api/auth/*            → 5 req/min/IP
+ *     /api/vehicules/recherche → 30 req/min/IP
+ *     /api/vehicules/{id}    → 30 req/min/IP (anti-énumération)
+ */
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class RateLimitingFilter extends OncePerRequestFilter {
 
     private final ObjectMapper objectMapper;
-    private final Map<String, Bucket> authBuckets = new ConcurrentHashMap<>();
-    private final Map<String, Bucket> searchBuckets = new ConcurrentHashMap<>();
+
+    @Value("${rate-limit.trusted-proxies:}")
+    private String trustedProxiesCsv;
+
+    @Value("${rate-limit.auth-per-minute:5}")
+    private int authLimit;
+
+    @Value("${rate-limit.search-per-minute:30}")
+    private int searchLimit;
+
+    @Value("${rate-limit.detail-per-minute:30}")
+    private int detailLimit;
+
+    private List<String> trustedProxies = Collections.emptyList();
+
+    private final Cache<String, Bucket> authBuckets = Caffeine.newBuilder()
+            .expireAfterAccess(Duration.ofMinutes(10))
+            .maximumSize(100_000)
+            .build();
+
+    private final Cache<String, Bucket> searchBuckets = Caffeine.newBuilder()
+            .expireAfterAccess(Duration.ofMinutes(10))
+            .maximumSize(100_000)
+            .build();
+
+    private final Cache<String, Bucket> detailBuckets = Caffeine.newBuilder()
+            .expireAfterAccess(Duration.ofMinutes(10))
+            .maximumSize(100_000)
+            .build();
+
+    @PostConstruct
+    void init() {
+        if (trustedProxiesCsv != null && !trustedProxiesCsv.isBlank()) {
+            trustedProxies = new ArrayList<>(Arrays.asList(trustedProxiesCsv.split(",")));
+            trustedProxies.replaceAll(String::trim);
+            trustedProxies.removeIf(String::isBlank);
+        }
+        log.info("Rate limiter : trusted proxies = {}, limits = auth:{}/min search:{}/min detail:{}/min",
+                trustedProxies, authLimit, searchLimit, detailLimit);
+    }
 
     @Override
     protected void doFilterInternal(
@@ -40,15 +97,20 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         String clientIp = getClientIp(request);
 
         if (path.startsWith("/api/auth/")) {
-            Bucket bucket = authBuckets.computeIfAbsent(clientIp, k -> createAuthBucket());
-            if (!bucket.tryConsume(1)) {
+            if (!tryConsume(authBuckets, clientIp, authLimit)) {
                 sendRateLimitResponse(response, request, "Trop de tentatives. Réessayez dans une minute.");
                 return;
             }
-        } else if (path.equals("/api/vehicules/recherche")) {
-            Bucket bucket = searchBuckets.computeIfAbsent(clientIp, k -> createSearchBucket());
-            if (!bucket.tryConsume(1)) {
+        } else if ("/api/vehicules/recherche".equals(path)) {
+            if (!tryConsume(searchBuckets, clientIp, searchLimit)) {
                 sendRateLimitResponse(response, request, "Trop de recherches. Réessayez dans une minute.");
+                return;
+            }
+        } else if (path.startsWith("/api/vehicules/") && "GET".equals(request.getMethod())
+                && !path.equals("/api/vehicules/recherche")) {
+            // Protection anti-énumération sur GET /api/vehicules/{id}
+            if (!tryConsume(detailBuckets, clientIp, detailLimit)) {
+                sendRateLimitResponse(response, request, "Trop de requêtes. Réessayez dans une minute.");
                 return;
             }
         }
@@ -56,22 +118,32 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private Bucket createAuthBucket() {
-        Bandwidth limit = Bandwidth.classic(5, Refill.intervally(5, Duration.ofMinutes(1)));
+    private boolean tryConsume(Cache<String, Bucket> cache, String key, int limitPerMinute) {
+        Bucket bucket = cache.get(key, k -> createBucket(limitPerMinute));
+        return bucket != null && bucket.tryConsume(1);
+    }
+
+    private Bucket createBucket(int limitPerMinute) {
+        Bandwidth limit = Bandwidth.classic(limitPerMinute,
+                Refill.intervally(limitPerMinute, Duration.ofMinutes(1)));
         return Bucket.builder().addLimit(limit).build();
     }
 
-    private Bucket createSearchBucket() {
-        Bandwidth limit = Bandwidth.classic(30, Refill.intervally(30, Duration.ofMinutes(1)));
-        return Bucket.builder().addLimit(limit).build();
-    }
-
+    /**
+     * Résolution IP client avec trust strict du header X-Forwarded-For
+     * uniquement si l'IP directe (remote addr) est dans la liste des proxies
+     * de confiance. Sinon on ignore complètement le header.
+     */
     private String getClientIp(HttpServletRequest request) {
-        String xForwardedFor = request.getHeader("X-Forwarded-For");
-        if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
-            return xForwardedFor.split(",")[0].trim();
+        String remoteAddr = request.getRemoteAddr();
+        if (trustedProxies.isEmpty() || !trustedProxies.contains(remoteAddr)) {
+            return remoteAddr;
         }
-        return request.getRemoteAddr();
+        String xff = request.getHeader("X-Forwarded-For");
+        if (xff != null && !xff.isBlank()) {
+            return xff.split(",")[0].trim();
+        }
+        return remoteAddr;
     }
 
     private void sendRateLimitResponse(HttpServletResponse response, HttpServletRequest request, String message)

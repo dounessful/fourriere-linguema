@@ -54,6 +54,11 @@ public class Vehicule {
     @JoinColumn(name = "fourriere_id")
     private Fourriere fourriere;
 
+    // Commune d'autorité légale (obligatoire)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "commune_id", nullable = false)
+    private Commune commune;
+
     @Column(length = 20)
     private String telephone;
 

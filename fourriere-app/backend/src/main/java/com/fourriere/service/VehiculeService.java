@@ -4,11 +4,13 @@ import com.fourriere.dto.request.VehiculeRequest;
 import com.fourriere.dto.response.PageResponse;
 import com.fourriere.dto.response.StatsResponse;
 import com.fourriere.dto.response.VehiculeResponse;
+import com.fourriere.entity.Commune;
 import com.fourriere.entity.Fourriere;
 import com.fourriere.entity.Vehicule;
 import com.fourriere.exception.DuplicateResourceException;
 import com.fourriere.exception.ResourceNotFoundException;
 import com.fourriere.entity.TransfertVehicule;
+import com.fourriere.repository.CommuneRepository;
 import com.fourriere.repository.FourriereRepository;
 import com.fourriere.repository.TransfertVehiculeRepository;
 import com.fourriere.repository.VehiculeRepository;
@@ -33,6 +35,7 @@ public class VehiculeService {
 
     private final VehiculeRepository vehiculeRepository;
     private final FourriereRepository fourriereRepository;
+    private final CommuneRepository communeRepository;
     private final TransfertVehiculeRepository transfertRepository;
 
     public VehiculeResponse rechercheParImmatriculation(String immatriculation) {
@@ -45,6 +48,51 @@ public class VehiculeService {
     public VehiculeResponse getById(Long id) {
         Vehicule vehicule = vehiculeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Véhicule", "id", id));
+        return toResponse(vehicule);
+    }
+
+    /**
+     * Liste paginée filtrée par commune (pour les agents de commune).
+     */
+    @Transactional(readOnly = true)
+    public PageResponse<VehiculeResponse> getAllByCommune(Long communeId, int page, int size,
+                                                          String sortBy, String sortDir,
+                                                          String immatriculation, Boolean recupere) {
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDir), sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        String normalizedImmat = immatriculation != null ?
+                ImmatriculationUtil.normalize(immatriculation) : null;
+
+        Page<Vehicule> result = vehiculeRepository.findAllByCommuneWithFilters(
+                communeId, normalizedImmat, recupere, pageable);
+
+        List<VehiculeResponse> content = result.getContent().stream()
+                .map(this::toResponse)
+                .toList();
+
+        return PageResponse.<VehiculeResponse>builder()
+                .content(content)
+                .page(result.getNumber())
+                .size(result.getSize())
+                .totalElements(result.getTotalElements())
+                .totalPages(result.getTotalPages())
+                .first(result.isFirst())
+                .last(result.isLast())
+                .build();
+    }
+
+    /**
+     * Récupère un véhicule uniquement s'il appartient à la commune donnée.
+     * Pour les agents : protection RLS applicative contre l'accès cross-commune.
+     */
+    @Transactional(readOnly = true)
+    public VehiculeResponse getByIdForCommune(Long id, Long communeId) {
+        Vehicule vehicule = vehiculeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Véhicule", "id", id));
+        if (vehicule.getCommune() == null || !communeId.equals(vehicule.getCommune().getId())) {
+            throw new ResourceNotFoundException("Véhicule", "id", id);
+        }
         return toResponse(vehicule);
     }
 
@@ -86,6 +134,10 @@ public class VehiculeService {
         Fourriere fourriere = fourriereRepository.findById(request.getFourriereId())
                 .orElseThrow(() -> new ResourceNotFoundException("Fourrière", "id", request.getFourriereId()));
 
+        // Récupérer la commune (obligatoire)
+        Commune commune = communeRepository.findById(request.getCommuneId())
+                .orElseThrow(() -> new ResourceNotFoundException("Commune", "id", request.getCommuneId()));
+
         Vehicule vehicule = Vehicule.builder()
                 .immatriculation(normalizedImmat)
                 .numeroSerie(request.getNumeroSerie())
@@ -95,6 +147,7 @@ public class VehiculeService {
                 .dateEntree(request.getDateEntree())
                 .motifEnlevement(request.getMotifEnlevement())
                 .fourriere(fourriere)
+                .commune(commune)
                 .telephone(fourriere.getTelephone())
                 .latitude(fourriere.getLatitude())
                 .longitude(fourriere.getLongitude())
@@ -121,6 +174,10 @@ public class VehiculeService {
         Fourriere fourriere = fourriereRepository.findById(request.getFourriereId())
                 .orElseThrow(() -> new ResourceNotFoundException("Fourrière", "id", request.getFourriereId()));
 
+        // Commune d'autorité
+        Commune commune = communeRepository.findById(request.getCommuneId())
+                .orElseThrow(() -> new ResourceNotFoundException("Commune", "id", request.getCommuneId()));
+
         vehicule.setImmatriculation(normalizedImmat);
         vehicule.setNumeroSerie(request.getNumeroSerie());
         vehicule.setMarque(request.getMarque());
@@ -129,6 +186,7 @@ public class VehiculeService {
         vehicule.setDateEntree(request.getDateEntree());
         vehicule.setMotifEnlevement(request.getMotifEnlevement());
         vehicule.setFourriere(fourriere);
+        vehicule.setCommune(commune);
         vehicule.setTelephone(fourriere.getTelephone());
         vehicule.setLatitude(fourriere.getLatitude());
         vehicule.setLongitude(fourriere.getLongitude());
@@ -233,6 +291,17 @@ public class VehiculeService {
         if (vehicule.getEquipeAjout() != null) {
             builder.equipeId(vehicule.getEquipeAjout().getId())
                    .equipeNom(vehicule.getEquipeAjout().getNom());
+        }
+
+        // Commune d'autorité légale
+        if (vehicule.getCommune() != null) {
+            Commune c = vehicule.getCommune();
+            builder.communeId(c.getId())
+                   .communeNom(c.getNom())
+                   .communeRegion(c.getRegion())
+                   .communeTelephone(c.getTelephone())
+                   .communeEmail(c.getEmail())
+                   .communeAdresse(c.getAdresse());
         }
 
         // Traçabilité transferts : dernier transfert s'il existe

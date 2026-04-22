@@ -37,4 +37,19 @@ public interface VehiculeRepository extends JpaRepository<Vehicule, Long> {
 
     @Query("SELECT COUNT(v) FROM Vehicule v WHERE v.recupere = true AND v.dateSortie >= :dateDebut")
     long countRecuperesSince(@Param("dateDebut") LocalDateTime dateDebut);
+
+    // Filtrage par commune (pour les agents de commune)
+    @Query("SELECT v FROM Vehicule v WHERE v.commune.id = :communeId AND " +
+           "(COALESCE(:immatriculation, '') = '' OR v.immatriculation LIKE CONCAT('%', :immatriculation, '%')) AND " +
+           "(:recupere IS NULL OR v.recupere = :recupere)")
+    Page<Vehicule> findAllByCommuneWithFilters(
+            @Param("communeId") Long communeId,
+            @Param("immatriculation") String immatriculation,
+            @Param("recupere") Boolean recupere,
+            Pageable pageable);
+
+    long countByCommuneId(Long communeId);
+
+    @Query("SELECT COUNT(v) FROM Vehicule v WHERE v.commune.id = :communeId AND v.recupere = false")
+    long countActifsByCommuneId(@Param("communeId") Long communeId);
 }

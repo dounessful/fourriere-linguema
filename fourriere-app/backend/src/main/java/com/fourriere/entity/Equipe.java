@@ -28,9 +28,6 @@ public class Equipe {
     @Column(length = 255)
     private String description;
 
-    @Column(length = 100)
-    private String zone;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fourriere_id")
     private Fourriere fourriereAssignee;

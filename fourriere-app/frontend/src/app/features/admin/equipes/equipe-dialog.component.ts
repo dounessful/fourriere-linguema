@@ -51,11 +51,6 @@ import { Fourriere } from '../../../core/models/fourriere.model';
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Zone d'intervention</mat-label>
-          <input matInput formControlName="zone" placeholder="Plateau, Médina, Fann">
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full-width">
           <mat-label>Fourrière assignée</mat-label>
           <mat-select formControlName="fourriereAssigneeId">
             <mat-option [value]="null">Aucune</mat-option>
@@ -168,7 +163,6 @@ export class EquipeDialogComponent implements OnInit {
     this.form = this.fb.group({
       nom: [this.data?.nom || '', Validators.required],
       description: [this.data?.description || ''],
-      zone: [this.data?.zone || ''],
       fourriereAssigneeId: [this.data?.fourriereAssigneeId || null],
       active: [this.data?.active ?? true]
     });

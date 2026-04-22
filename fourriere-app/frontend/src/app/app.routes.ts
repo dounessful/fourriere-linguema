@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
+import { agentGuard } from './core/guards/agent.guard';
 
 export const routes: Routes = [
   {
@@ -43,12 +44,32 @@ export const routes: Routes = [
         loadComponent: () => import('./features/admin/equipes/equipes.component').then(m => m.EquipeListComponent)
       },
       {
+        path: 'communes',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./features/admin/communes/communes.component').then(m => m.CommunesComponent)
+      },
+      {
         path: 'transferts',
         loadComponent: () => import('./features/admin/transferts/transferts.component').then(m => m.TransfertsComponent)
       },
       {
         path: '',
         redirectTo: 'dashboard',
+        pathMatch: 'full'
+      }
+    ]
+  },
+  {
+    path: 'agent',
+    canActivate: [agentGuard],
+    children: [
+      {
+        path: 'vehicules',
+        loadComponent: () => import('./features/agent/vehicules/agent-vehicules.component').then(m => m.AgentVehiculesComponent)
+      },
+      {
+        path: '',
+        redirectTo: 'vehicules',
         pathMatch: 'full'
       }
     ]

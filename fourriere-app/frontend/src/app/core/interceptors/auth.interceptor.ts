@@ -54,8 +54,9 @@ async function getToken(keycloak: KeycloakService): Promise<string | null> {
     await keycloak.updateToken(30);
 
     return keycloakInstance.token || null;
-  } catch (error) {
-    console.error('Error getting Keycloak token:', error);
+  } catch {
+    // Silencieux volontairement : un échec de récupération de token ne doit pas
+    // fuiter dans les logs du navigateur en production.
     return null;
   }
 }

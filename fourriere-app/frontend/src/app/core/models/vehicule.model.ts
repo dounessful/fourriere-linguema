@@ -28,6 +28,13 @@ export interface Vehicule {
   transfere?: boolean;
   derniereDateTransfert?: string | null;
   derniereFourriereSourceNom?: string | null;
+  // Commune d'autorité légale
+  communeId?: number;
+  communeNom?: string;
+  communeRegion?: string;
+  communeTelephone?: string;
+  communeEmail?: string;
+  communeAdresse?: string;
 }
 
 export enum MotifEnlevement {
@@ -55,6 +62,7 @@ export interface VehiculeRequest {
   dateEntree: string;
   motifEnlevement: MotifEnlevement;
   fourriereId: number;
+  communeId: number;
   adresseFourriere?: string;
   nomFourriere?: string;
   telephone?: string;

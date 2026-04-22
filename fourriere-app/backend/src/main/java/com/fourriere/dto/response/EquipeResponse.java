@@ -12,7 +12,6 @@ public class EquipeResponse {
     private Long id;
     private String nom;
     private String description;
-    private String zone;
     private Long fourriereAssigneeId;
     private String fourriereAssigneeNom;
     private Boolean active;

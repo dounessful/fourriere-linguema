@@ -1,9 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { VehiculeService } from '../../../core/services/vehicule.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -26,6 +27,22 @@ import { VehiculeService } from '../../../core/services/vehicule.service';
             </defs>
             <rect width="100%" height="100%" fill="url(#grid)"/>
           </svg>
+        </div>
+
+        <!-- Photos flottantes décoratives + accroches -->
+        <div class="floating-photos" aria-hidden="true">
+          <div class="fp fp-a">
+            <img src="assets/photo-a.jpg" alt="" loading="lazy" />
+            <span class="fp-label"><strong>Linguema</strong> intervient 24h/24</span>
+          </div>
+          <div class="fp fp-b">
+            <img src="assets/photo-b.jpg" alt="" loading="lazy" />
+            <span class="fp-label fp-label-b">L'expertise <strong>Linguema</strong></span>
+          </div>
+          <div class="fp fp-c">
+            <img src="assets/photo-c.jpg" alt="" loading="lazy" />
+            <span class="fp-label"><strong>Linguema</strong> prend en charge</span>
+          </div>
         </div>
 
         <div class="hero-inner">
@@ -263,12 +280,12 @@ import { VehiculeService } from '../../../core/services/vehicule.service';
                   <span class="tel-num">+221 33 800 00 12</span>
                 </span>
               </a>
-              <a class="help-mail" href="mailto:aide@linguema.sn">
+              <a class="help-mail" href="mailto:aide@fourriere.sn">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
                   <polyline points="22,6 12,13 2,6"/>
                 </svg>
-                aide&#64;linguema.sn
+                aide&#64;fourriere.sn
               </a>
             </div>
           </div>
@@ -326,8 +343,93 @@ import { VehiculeService } from '../../../core/services/vehicule.service';
       opacity: 0.4;
     }
 
+    /* Floating photos — visible uniquement sur grands écrans */
+    .floating-photos {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+
+      @media (max-width: 1100px) { display: none; }
+    }
+
+    /* Écran moyen-grand (1100-1530px) : seulement A et B */
+    @media (max-width: 1530px) and (min-width: 1101px) {
+      .fp-c { display: none; }
+    }
+
+    /* Écran très large (3 images) : masquer le label de B */
+    .fp-b {
+      @media (min-width: 1531px) {
+        .fp-label { display: none !important; }
+        img { border-radius: 0 0 var(--r-lg) var(--r-lg); }
+      }
+    }
+
+    .fp {
+      position: absolute;
+      width: 190px;
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      box-shadow:
+        0 16px 36px -10px rgba(28, 25, 23, 0.22),
+        0 6px 12px -4px rgba(28, 25, 23, 0.1);
+      border: 3px solid #fff;
+      opacity: 0.9;
+      transition: transform 0.4s ease, opacity 0.4s ease;
+
+      &:hover {
+        transform: rotate(0deg) !important;
+        opacity: 1;
+      }
+
+      img {
+        display: block;
+        width: 100%;
+        height: 230px;
+        object-fit: cover;
+      }
+    }
+
+    .fp-label {
+      display: block;
+      padding: 10px 12px;
+      background: #fff;
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-2);
+      letter-spacing: 0.01em;
+      line-height: 1.3;
+      text-align: center;
+
+      strong {
+        color: var(--brand);
+        font-weight: 700;
+      }
+    }
+
+    .fp-a {
+      top: 8%;
+      left: 4%;
+      transform: rotate(-4deg);
+    }
+
+    .fp-b {
+      top: 12%;
+      right: 3%;
+      transform: rotate(3deg);
+    }
+
+    .fp-c {
+      bottom: 2%;
+      right: 12%;
+      transform: rotate(-2.5deg);
+    }
+
     .hero-inner {
       position: relative;
+      z-index: 1;
       width: 100%;
       max-width: 720px;
       text-align: center;
@@ -685,14 +787,28 @@ import { VehiculeService } from '../../../core/services/vehicule.service';
     }
   `]
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   private vehiculeService = inject(VehiculeService);
   private router = inject(Router);
+  private auth = inject(AuthService);
 
   immatriculation = '';
   loading = false;
   error = '';
   focused = false;
+
+  ngOnInit(): void {
+    // Redirection post-login selon le rôle
+    // Petit délai pour laisser AuthService lire le token Keycloak
+    setTimeout(() => {
+      if (!this.auth.isAuthenticated()) return;
+      if (this.auth.isOnlyAgent()) {
+        this.router.navigate(['/agent/vehicules']);
+      } else if (this.auth.isAdmin()) {
+        this.router.navigate(['/admin/dashboard']);
+      }
+    }, 300);
+  }
 
   sanitizeInput(): void {
     this.immatriculation = this.immatriculation.replace(/[^A-Za-z0-9 \-]/g, '');

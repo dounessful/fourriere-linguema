@@ -2,7 +2,6 @@ export interface Equipe {
   id: number;
   nom: string;
   description?: string;
-  zone?: string;
   fourriereAssigneeId?: number;
   fourriereAssigneeNom?: string;
   active: boolean;
@@ -13,7 +12,6 @@ export interface Equipe {
 export interface EquipeRequest {
   nom: string;
   description?: string;
-  zone?: string;
   fourriereAssigneeId?: number;
   active?: boolean;
 }

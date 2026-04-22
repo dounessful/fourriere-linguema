@@ -23,6 +23,13 @@ export class AuthService {
     (this.utilisateurSignal()?.roles.includes(Role.ADMIN) ||
     this.utilisateurSignal()?.roles.includes(Role.SUPER_ADMIN)) ?? false
   );
+  readonly isAgentCommune = computed(() =>
+    this.utilisateurSignal()?.roles.includes(Role.AGENT_COMMUNE) ?? false
+  );
+  readonly isOnlyAgent = computed(() => {
+    const roles = this.utilisateurSignal()?.roles ?? [];
+    return roles.includes(Role.AGENT_COMMUNE) && !roles.includes(Role.ADMIN) && !roles.includes(Role.SUPER_ADMIN);
+  });
 
   constructor() {
     // Delay initialization to ensure Keycloak is ready
@@ -37,7 +44,6 @@ export class AuthService {
       // Check if Keycloak instance exists
       const keycloakInstance = this.keycloak.getKeycloakInstance();
       if (!keycloakInstance) {
-        console.warn('Keycloak instance not available');
         return;
       }
 
@@ -56,8 +62,7 @@ export class AuthService {
           });
         }
       }
-    } catch (error) {
-      console.error('Error initializing user from token:', error);
+    } catch {
       this.isLoggedInSignal.set(false);
     }
   }
@@ -65,28 +70,29 @@ export class AuthService {
   private extractRoles(tokenParsed: any): Role[] {
     const roles: Role[] = [];
 
+    const pushRole = (role: string) => {
+      if (role === 'ADMIN') roles.push(Role.ADMIN);
+      else if (role === 'SUPER_ADMIN') roles.push(Role.SUPER_ADMIN);
+      else if (role === 'AGENT_COMMUNE') roles.push(Role.AGENT_COMMUNE);
+    };
+
     // Try direct 'roles' claim first (our custom mapper)
     if (tokenParsed['roles'] && Array.isArray(tokenParsed['roles'])) {
-      for (const role of tokenParsed['roles']) {
-        if (role === 'ADMIN') roles.push(Role.ADMIN);
-        if (role === 'SUPER_ADMIN') roles.push(Role.SUPER_ADMIN);
-      }
+      tokenParsed['roles'].forEach(pushRole);
     }
 
     // Fallback: try realm_access.roles (standard Keycloak structure)
     if (roles.length === 0 && tokenParsed['realm_access']?.['roles']) {
-      for (const role of tokenParsed['realm_access']['roles']) {
-        if (role === 'ADMIN') roles.push(Role.ADMIN);
-        if (role === 'SUPER_ADMIN') roles.push(Role.SUPER_ADMIN);
-      }
+      tokenParsed['realm_access']['roles'].forEach(pushRole);
     }
 
     return roles;
   }
 
   async login(redirectUri?: string): Promise<void> {
+    // Redirection post-login vers la home. La home redirige ensuite selon le rôle.
     await this.keycloak.login({
-      redirectUri: redirectUri || window.location.origin + '/admin/dashboard'
+      redirectUri: redirectUri || window.location.origin + '/'
     });
   }
 

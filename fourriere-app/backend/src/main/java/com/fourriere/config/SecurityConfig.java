@@ -38,6 +38,9 @@ public class SecurityConfig {
     private final RateLimitingFilter rateLimitingFilter;
     private final CorsConfigurationSource corsConfigurationSource;
 
+    @org.springframework.beans.factory.annotation.Value("${springdoc.api-docs.enabled:true}")
+    private boolean swaggerEnabled;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -48,17 +51,24 @@ public class SecurityConfig {
                         .contentTypeOptions(contentType -> {})
                         .frameOptions(frame -> frame.deny())
                 )
-                .authorizeHttpRequests(auth -> auth
+                .authorizeHttpRequests(auth -> {
+                        auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/vehicules/recherche").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/vehicules/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/fourrieres/active").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/api-docs/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers("/actuator/health/**", "/actuator/info").permitAll()
+                        // Actuator : uniquement /health accessible sans auth (pour healthchecks Docker / LB)
+                        .requestMatchers("/actuator/health", "/actuator/health/**").permitAll();
+                        if (swaggerEnabled) {
+                            auth.requestMatchers("/swagger-ui/**", "/api-docs/**", "/swagger-ui.html").permitAll();
+                        }
+                        auth
                         .requestMatchers("/api/admin/utilisateurs/**").hasRole("SUPER_ADMIN")
+                        .requestMatchers("/api/admin/communes/**").hasRole("SUPER_ADMIN")
                         .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
-                        .anyRequest().authenticated()
-                )
+                        .requestMatchers("/api/agent/**").hasAnyRole("AGENT_COMMUNE", "ADMIN", "SUPER_ADMIN")
+                        .anyRequest().authenticated();
+                })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))

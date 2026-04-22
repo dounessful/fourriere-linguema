@@ -60,11 +60,6 @@ import { ConfirmDialogComponent } from '../dashboard/confirm-dialog.component';
                 <td mat-cell *matCellDef="let e">{{ e.description || '-' }}</td>
               </ng-container>
 
-              <ng-container matColumnDef="zone">
-                <th mat-header-cell *matHeaderCellDef>Zone</th>
-                <td mat-cell *matCellDef="let e">{{ e.zone || '-' }}</td>
-              </ng-container>
-
               <ng-container matColumnDef="fourriere">
                 <th mat-header-cell *matHeaderCellDef>Fourrière Assignée</th>
                 <td mat-cell *matCellDef="let e">{{ e.fourriereAssigneeNom || '-' }}</td>
@@ -301,7 +296,7 @@ export class EquipeListComponent implements OnInit {
   equipes = signal<Equipe[]>([]);
   loading = signal(true);
 
-  displayedColumns = ['nom', 'zone', 'fourriere', 'statut', 'actions'];
+  displayedColumns = ['nom', 'fourriere', 'statut', 'actions'];
 
   ngOnInit(): void {
     this.loadEquipes();

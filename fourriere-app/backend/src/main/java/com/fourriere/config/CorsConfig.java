@@ -18,12 +18,26 @@ public class CorsConfig implements WebMvcConfigurer {
     @Value("${cors.allowed-origins}")
     private String allowedOrigins;
 
+    private static final List<String> ALLOWED_METHODS =
+            Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS");
+
+    private static final List<String> ALLOWED_HEADERS = Arrays.asList(
+            "Authorization",
+            "Content-Type",
+            "Accept",
+            "X-Requested-With",
+            "Origin"
+    );
+
+    private static final List<String> EXPOSED_HEADERS = List.of("Content-Disposition");
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
                 .allowedOrigins(allowedOrigins.split(","))
-                .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
+                .allowedMethods(ALLOWED_METHODS.toArray(new String[0]))
+                .allowedHeaders(ALLOWED_HEADERS.toArray(new String[0]))
+                .exposedHeaders(EXPOSED_HEADERS.toArray(new String[0]))
                 .allowCredentials(true)
                 .maxAge(3600);
     }
@@ -32,8 +46,9 @@ public class CorsConfig implements WebMvcConfigurer {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(allowedOrigins.split(",")));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowedMethods(ALLOWED_METHODS);
+        configuration.setAllowedHeaders(ALLOWED_HEADERS);
+        configuration.setExposedHeaders(EXPOSED_HEADERS);
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
