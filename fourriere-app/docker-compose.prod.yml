@@ -36,7 +36,9 @@ services:
     image: quay.io/keycloak/keycloak:24.0
     container_name: fourriere-keycloak
     restart: unless-stopped
-    command: start --optimized
+    command: start --import-realm
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import:ro
     environment:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak_db
@@ -46,7 +48,7 @@ services:
       KC_HOSTNAME_STRICT: true
       KC_HOSTNAME_STRICT_HTTPS: true
       KC_HTTP_ENABLED: true
-      KC_PROXY: edge
+      KC_PROXY_HEADERS: xforwarded
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:?KEYCLOAK_ADMIN required}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?KEYCLOAK_ADMIN_PASSWORD required}
     depends_on:
@@ -67,6 +69,7 @@ services:
         condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: prod
+      SERVER_PORT: 8080
       DATABASE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
       DATABASE_USERNAME: ${POSTGRES_USER}
       DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
