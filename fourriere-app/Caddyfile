@@ -7,8 +7,7 @@
 # =====================================================================
 
 {
-    email {env.ACME_EMAIL}
-    # Journalisation propre
+    email {$ACME_EMAIL}
     log {
         output stdout
         format console
@@ -16,10 +15,9 @@
 }
 
 # ----- Backend API -----------------------------------------------------
-{env.API_HOSTNAME} {
+{$API_HOSTNAME} {
     encode gzip zstd
 
-    # Headers de sécurité
     header {
         Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
         X-Content-Type-Options    "nosniff"
@@ -29,15 +27,11 @@
         -Server
     }
 
-    reverse_proxy backend:8080 {
-        header_up X-Real-IP {remote_host}
-        header_up X-Forwarded-For {remote_host}
-        header_up X-Forwarded-Proto {scheme}
-    }
+    reverse_proxy backend:8080
 }
 
 # ----- Keycloak --------------------------------------------------------
-{env.KEYCLOAK_HOSTNAME} {
+{$KEYCLOAK_HOSTNAME} {
     encode gzip zstd
 
     header {
@@ -47,14 +41,13 @@
         -Server
     }
 
-    # Blocage de la console admin Keycloak depuis Internet.
-    # Décommenter et ajuster avec vos IPs d'admin pour ouvrir sélectivement.
-    @kcAdmin {
-        path /admin*
+    # Blocage de la console admin depuis Internet
+    @kcAdmin path /admin*
+    handle @kcAdmin {
+        respond "Administration interface not available publicly" 403
     }
-    respond @kcAdmin "Administration interface not available publicly" 403
 
-    # Autorisation explicite des endpoints publics nécessaires aux clients
+    # Endpoints publics nécessaires au client frontend
     @kcAllowed {
         path /realms/fourriere/*
         path /resources/*
@@ -62,13 +55,12 @@
     }
     handle @kcAllowed {
         reverse_proxy keycloak:8080 {
-            header_up X-Real-IP {remote_host}
-            header_up X-Forwarded-For {remote_host}
-            header_up X-Forwarded-Proto {scheme}
             header_up Host {host}
         }
     }
 
-    # Tout le reste refusé (bloque /admin/master, /realms/master, etc.)
-    respond 404
+    # Tout le reste : 404 (empêche /realms/master, /realms/master/..., etc.)
+    handle {
+        respond 404
+    }
 }
