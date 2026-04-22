@@ -41,10 +41,19 @@
         -Server
     }
 
-    # Blocage de la console admin depuis Internet
+    # Console admin : accès restreint aux IP de confiance (ADMIN_TRUSTED_IPS)
+    # Exemple .env : ADMIN_TRUSTED_IPS="154.125.133.177 41.82.0.0/16"
     @kcAdmin path /admin*
     handle @kcAdmin {
-        respond "Administration interface not available publicly" 403
+        @adminTrusted remote_ip {$ADMIN_TRUSTED_IPS}
+        handle @adminTrusted {
+            reverse_proxy keycloak:8080 {
+                header_up Host {host}
+            }
+        }
+        handle {
+            respond "Administration interface not available publicly" 403
+        }
     }
 
     # Endpoints publics nécessaires au client frontend
