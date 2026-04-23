@@ -56,15 +56,21 @@
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": false,
       "redirectUris": [
-        "http://localhost:4202/*"
+        "http://localhost:4202/*",
+        "https://www.fourriere.sn/*",
+        "https://fourriere.sn/*",
+        "https://fourriere-linguema.pages.dev/*"
       ],
       "webOrigins": [
-        "http://localhost:4202"
+        "http://localhost:4202",
+        "https://www.fourriere.sn",
+        "https://fourriere.sn",
+        "https://fourriere-linguema.pages.dev"
       ],
       "protocol": "openid-connect",
       "attributes": {
         "pkce.code.challenge.method": "S256",
-        "post.logout.redirect.uris": "http://localhost:4202/*"
+        "post.logout.redirect.uris": "http://localhost:4202/*##https://www.fourriere.sn/*##https://fourriere.sn/*"
       },
       "protocolMappers": [
         {
