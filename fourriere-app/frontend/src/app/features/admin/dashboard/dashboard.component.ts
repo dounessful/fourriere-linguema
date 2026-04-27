@@ -122,13 +122,13 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
 
             <div class="filters">
               <mat-form-field appearance="outline" class="search-field">
-                <mat-label>Plaque</mat-label>
+                <mat-label>Plaque ou VIN</mat-label>
                 <mat-icon matPrefix>search</mat-icon>
                 <input
                   matInput
                   [(ngModel)]="searchImmat"
                   (keyup.enter)="applyFilter()"
-                  placeholder="AA123BB"
+                  placeholder="AA123BB ou SN1RFB00..."
                 />
                 @if (searchImmat) {
                   <button matSuffix mat-icon-button (click)="searchImmat = ''; applyFilter()">
@@ -485,13 +485,13 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
     }
 
     .search-field {
-      width: 240px;
-      flex-shrink: 0;
+      flex: 1;
+      min-width: 260px;
     }
 
     .date-range-field {
-      flex: 1;
-      min-width: 240px;
+      width: 260px;
+      flex-shrink: 0;
     }
 
     .status-field {
