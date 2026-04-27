@@ -19,6 +19,13 @@ import java.util.List;
  *   application.yml → app.seed.enabled: true
  * ou variable d'env :
  *   APP_SEED_ENABLED=true
+ *
+ * NOTE (2026-04) : depuis le passage à Keycloak comme source d'identité,
+ * les users seedés n'ont plus de keycloak_id — ils sont présents en DB mais
+ * ne peuvent pas se logger tant qu'on n'a pas créé les users correspondants
+ * dans Keycloak (mêmes emails). Utile seulement pour tester les requêtes JPA.
+ * Pour un dev complet : utiliser POST /api/admin/utilisateurs (qui crée
+ * simultanément en Keycloak et en DB).
  */
 @Component
 @ConditionalOnProperty(name = "app.seed.enabled", havingValue = "true")
@@ -233,7 +240,6 @@ public class DataInitializer implements CommandLineRunner {
             List<Utilisateur> utilisateurs = List.of(
                 Utilisateur.builder()
                     .email("admin@fourriere.sn")
-                    .password("$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG") // password123
                     .nom("Mamadou Diallo")
                     .role(Role.SUPER_ADMIN)
                     .actif(true)
@@ -241,7 +247,6 @@ public class DataInitializer implements CommandLineRunner {
 
                 Utilisateur.builder()
                     .email("plateau@fourriere.sn")
-                    .password("$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG")
                     .nom("Fatou Ndiaye")
                     .role(Role.ADMIN)
                     .equipe(equipes.get(0))
@@ -250,7 +255,6 @@ public class DataInitializer implements CommandLineRunner {
 
                 Utilisateur.builder()
                     .email("medina@fourriere.sn")
-                    .password("$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG")
                     .nom("Ibrahima Sow")
                     .role(Role.ADMIN)
                     .equipe(equipes.get(1))
@@ -259,7 +263,6 @@ public class DataInitializer implements CommandLineRunner {
 
                 Utilisateur.builder()
                     .email("parcelles@fourriere.sn")
-                    .password("$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG")
                     .nom("Aissatou Ba")
                     .role(Role.ADMIN)
                     .equipe(equipes.get(2))
@@ -268,7 +271,6 @@ public class DataInitializer implements CommandLineRunner {
 
                 Utilisateur.builder()
                     .email("thies@fourriere.sn")
-                    .password("$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG")
                     .nom("Ousmane Fall")
                     .role(Role.ADMIN)
                     .equipe(equipes.get(4))
@@ -277,7 +279,6 @@ public class DataInitializer implements CommandLineRunner {
 
                 Utilisateur.builder()
                     .email("saintlouis@fourriere.sn")
-                    .password("$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG")
                     .nom("Aminata Diop")
                     .role(Role.ADMIN)
                     .equipe(equipes.get(5))
@@ -287,7 +288,6 @@ public class DataInitializer implements CommandLineRunner {
                 // Agents de commune — lecture seule, rattachés à leur commune
                 Utilisateur.builder()
                     .email("agent.plateau@linguema.sn")
-                    .password("$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG")
                     .nom("Moussa Sarr")
                     .role(Role.AGENT_COMMUNE)
                     .commune(communes.get(0)) // Dakar-Plateau
@@ -296,7 +296,6 @@ public class DataInitializer implements CommandLineRunner {
 
                 Utilisateur.builder()
                     .email("agent.medina@linguema.sn")
-                    .password("$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG")
                     .nom("Awa Cissé")
                     .role(Role.AGENT_COMMUNE)
                     .commune(communes.get(1)) // Médina
@@ -305,7 +304,6 @@ public class DataInitializer implements CommandLineRunner {
 
                 Utilisateur.builder()
                     .email("agent.thies@linguema.sn")
-                    .password("$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG")
                     .nom("Cheikh Gueye")
                     .role(Role.AGENT_COMMUNE)
                     .commune(communes.get(7)) // Thiès

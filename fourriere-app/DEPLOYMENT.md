@@ -326,11 +326,27 @@ Clic sur **Ajouter une entrée**, puis :
 
 ### 5.3 Vérifier la propagation
 
-Depuis ta machine locale :
+Depuis ta machine locale.
+
+**Linux / macOS** :
 ```bash
 dig +short api.fourriere.sn
 dig +short auth.fourriere.sn
 ```
+
+**Windows (PowerShell)** :
+```powershell
+Resolve-DnsName api.fourriere.sn -Type A
+Resolve-DnsName auth.fourriere.sn -Type A
+```
+
+**Windows (CMD)** :
+```cmd
+nslookup api.fourriere.sn
+nslookup auth.fourriere.sn
+```
+
+**Sans rien installer** : https://dnschecker.org/#A/api.fourriere.sn (vérifie sur plusieurs DNS mondiaux).
 
 Doit renvoyer `178.104.216.60`. Compter 5-30 minutes selon la propagation.
 
@@ -371,14 +387,18 @@ curl -I https://auth.fourriere.sn/realms/fourriere
 4. Sélectionner ce repo
 5. **Production branch** : `main`
 
-### 6.2 Build configuration
+### 6.2 Build configuration (monorepo)
+
+Cloudflare Pages supporte nativement les monorepos. On pointe directement vers le sous-dossier frontend :
 
 | Champ | Valeur |
 |---|---|
 | Framework preset | **None** |
-| Build command | `cd fourriere-app/frontend && npm ci && node tools/set-env.js && npm run build:prod` |
-| Build output directory | `fourriere-app/frontend/dist/fourriere-frontend/browser` |
-| Root directory | *(laisser vide)* |
+| **Root directory (optional)** | `fourriere-app/frontend` |
+| Build command | `npm ci && node tools/set-env.js && npm run build:prod` |
+| Build output directory | `dist/fourriere-frontend/browser` |
+
+> **Astuce monorepo** : dans **Settings → Builds & deployments → Configure production deployments → Build watch paths**, inclure `fourriere-app/frontend/**` pour que Cloudflare Pages **skippe les rebuilds** quand tu touches uniquement le backend. Économie de build minutes.
 
 ### 6.3 Variables d'environnement
 

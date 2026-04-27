@@ -21,6 +21,7 @@
         <java.version>17</java.version>
         <cloudinary.version>1.36.0</cloudinary.version>
         <bucket4j.version>8.7.0</bucket4j.version>
+        <keycloak.version>24.0.4</keycloak.version>
     </properties>
 
     <dependencies>
@@ -65,6 +66,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
+
+        <!-- Keycloak Admin Client : provisioning des users côté Keycloak -->
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-admin-client</artifactId>
+            <version>${keycloak.version}</version>
         </dependency>
 
         <!-- Cloudinary -->

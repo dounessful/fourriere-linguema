@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class UtilisateurResponse {
     private Long id;
+    private String keycloakId;
     private String email;
     private String nom;
     private Role role;

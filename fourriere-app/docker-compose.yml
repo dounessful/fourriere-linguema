@@ -77,6 +77,15 @@ services:
       CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-demo}
       CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-demo}
       CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-demo}
+      # Keycloak Admin API (provisioning) — en dev, le secret est géré via
+      # la console Keycloak après premier démarrage (cf. KEYCLOAK_SETUP.md).
+      # Laisser vide désactive simplement le sync : l'app démarre mais
+      # create/update/delete utilisateur côté API renverra une 500.
+      KEYCLOAK_ADMIN_URL: http://keycloak:8080
+      KEYCLOAK_ADMIN_REALM: fourriere
+      KEYCLOAK_ADMIN_CLIENT_ID: fourriere-admin-sync
+      KEYCLOAK_ADMIN_CLIENT_SECRET: ${KEYCLOAK_ADMIN_CLIENT_SECRET:-}
+      KEYCLOAK_ADMIN_ENABLED: ${KEYCLOAK_ADMIN_ENABLED:-true}
     ports:
       - "8086:8080"
     networks:

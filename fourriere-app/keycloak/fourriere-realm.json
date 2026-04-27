@@ -47,6 +47,23 @@
       "protocol": "openid-connect"
     },
     {
+      "clientId": "fourriere-admin-sync",
+      "name": "Fourriere Backend Admin Sync (service account)",
+      "description": "Service-account utilisé par le backend pour créer/modifier/supprimer des users Keycloak via l'Admin REST API",
+      "enabled": true,
+      "bearerOnly": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "secret": "CHANGE-ME-IN-ADMIN-CONSOLE",
+      "attributes": {
+        "access.token.lifespan": "300"
+      }
+    },
+    {
       "clientId": "fourriere-frontend",
       "name": "Fourriere Frontend Application",
       "enabled": true,
@@ -107,6 +124,21 @@
     "email",
     "roles",
     "web-origins"
+  ],
+  "users": [
+    {
+      "username": "service-account-fourriere-admin-sync",
+      "enabled": true,
+      "serviceAccountClientId": "fourriere-admin-sync",
+      "clientRoles": {
+        "realm-management": [
+          "manage-users",
+          "view-users",
+          "query-users",
+          "view-realm"
+        ]
+      }
+    }
   ],
   "accessTokenLifespan": 300,
   "accessTokenLifespanForImplicitFlow": 900,

@@ -21,11 +21,13 @@ public class Utilisateur {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // UUID de l'utilisateur côté Keycloak (source de vérité pour l'auth).
+    // Nullable tant que la migration historique des comptes pré-Keycloak n'est pas finie.
+    @Column(name = "keycloak_id", unique = true, length = 64)
+    private String keycloakId;
+
     @Column(nullable = false, unique = true)
     private String email;
-
-    @Column(nullable = false)
-    private String password;
 
     @Column(nullable = false, length = 100)
     private String nom;

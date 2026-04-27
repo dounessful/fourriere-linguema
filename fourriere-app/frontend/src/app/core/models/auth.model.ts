@@ -1,5 +1,6 @@
 export interface Utilisateur {
   id: number;
+  keycloakId?: string;
   email: string;
   nom: string;
   role: Role;
@@ -31,9 +32,17 @@ export const RoleLabels: Record<Role, string> = {
 
 export interface UtilisateurRequest {
   email: string;
-  password?: string;
   nom: string;
   role: Role;
   communeId?: number;
   actif?: boolean;
+}
+
+export interface UtilisateurCreatedResponse {
+  utilisateur: Utilisateur;
+  temporaryPassword: string;
+}
+
+export interface TemporaryPasswordResponse {
+  temporaryPassword: string;
 }

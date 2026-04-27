@@ -13,7 +13,9 @@ import { Utilisateur, Role } from '../../../core/models/auth.model';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import { ConfirmDialogComponent } from '../dashboard/confirm-dialog.component';
 import { UtilisateurDialogComponent } from './utilisateur-dialog.component';
+import { TempPasswordDialogComponent } from './temp-password-dialog.component';
 import { DateFrPipe } from '../../../shared/pipes/date-fr.pipe';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-utilisateurs',
@@ -28,6 +30,7 @@ import { DateFrPipe } from '../../../shared/pipes/date-fr.pipe';
     MatDialogModule,
     MatSnackBarModule,
     MatChipsModule,
+    MatTooltipModule,
     LoadingSpinnerComponent,
     DateFrPipe
   ],
@@ -94,10 +97,13 @@ import { DateFrPipe } from '../../../shared/pipes/date-fr.pipe';
               <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef>Actions</th>
                 <td mat-cell *matCellDef="let u">
-                  <button mat-icon-button (click)="openDialog(u)">
+                  <button mat-icon-button (click)="openDialog(u)" matTooltip="Modifier">
                     <mat-icon>edit</mat-icon>
                   </button>
-                  <button mat-icon-button color="warn" (click)="deleteUtilisateur(u)">
+                  <button mat-icon-button (click)="resetPassword(u)" matTooltip="Réinitialiser le mot de passe" [disabled]="!u.keycloakId">
+                    <mat-icon>key</mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn" (click)="deleteUtilisateur(u)" matTooltip="Supprimer">
                     <mat-icon>delete</mat-icon>
                   </button>
                 </td>
@@ -228,9 +234,9 @@ import { DateFrPipe } from '../../../shared/pipes/date-fr.pipe';
 
     /* Actions column — always visible */
     :host ::ng-deep .mat-column-actions {
-      width: 130px;
-      min-width: 130px;
-      max-width: 130px;
+      width: 160px;
+      min-width: 160px;
+      max-width: 160px;
       overflow: visible !important;
       text-overflow: clip !important;
     }
@@ -307,7 +313,7 @@ export class UtilisateursComponent implements OnInit {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: 'Confirmer la suppression',
-        message: `Supprimer l'utilisateur ${utilisateur.nom} ?`
+        message: `Supprimer l'utilisateur ${utilisateur.nom} ? Le compte Keycloak sera également supprimé.`
       }
     });
 
@@ -320,6 +326,38 @@ export class UtilisateursComponent implements OnInit {
           },
           error: () => {
             this.snackBar.open('Erreur lors de la suppression', 'OK', { duration: 3000 });
+          }
+        });
+      }
+    });
+  }
+
+  resetPassword(utilisateur: Utilisateur): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Réinitialiser le mot de passe',
+        message: `Générer un nouveau mot de passe temporaire pour ${utilisateur.nom} ? L'utilisateur devra le changer à sa prochaine connexion.`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.utilisateurService.resetPassword(utilisateur.id).subscribe({
+          next: (result) => {
+            this.dialog.open(TempPasswordDialogComponent, {
+              width: '480px',
+              disableClose: true,
+              data: {
+                title: 'Mot de passe réinitialisé',
+                subtitle: 'Transmettez ce nouveau mot de passe à l\'utilisateur :',
+                email: utilisateur.email,
+                password: result.temporaryPassword
+              }
+            });
+          },
+          error: (err) => {
+            const message = err.error?.message || 'Erreur lors de la réinitialisation';
+            this.snackBar.open(message, 'OK', { duration: 5000 });
           }
         });
       }

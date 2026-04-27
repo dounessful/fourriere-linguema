@@ -2,7 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Utilisateur, UtilisateurRequest } from '../models/auth.model';
+import {
+  Utilisateur,
+  UtilisateurRequest,
+  UtilisateurCreatedResponse,
+  TemporaryPasswordResponse
+} from '../models/auth.model';
 
 @Injectable({
   providedIn: 'root'
@@ -20,8 +25,8 @@ export class UtilisateurService {
     return this.http.get<Utilisateur>(`${this.apiUrl}/${id}`);
   }
 
-  create(utilisateur: UtilisateurRequest): Observable<Utilisateur> {
-    return this.http.post<Utilisateur>(this.apiUrl, utilisateur);
+  create(utilisateur: UtilisateurRequest): Observable<UtilisateurCreatedResponse> {
+    return this.http.post<UtilisateurCreatedResponse>(this.apiUrl, utilisateur);
   }
 
   update(id: number, utilisateur: UtilisateurRequest): Observable<Utilisateur> {
@@ -30,5 +35,9 @@ export class UtilisateurService {
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  resetPassword(id: number): Observable<TemporaryPasswordResponse> {
+    return this.http.post<TemporaryPasswordResponse>(`${this.apiUrl}/${id}/reset-password`, {});
   }
 }

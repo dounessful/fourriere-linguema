@@ -14,9 +14,6 @@ public class UtilisateurRequest {
     @Email(message = "Format d'email invalide")
     private String email;
 
-    @Size(min = 6, message = "Le mot de passe doit contenir au moins 6 caractères")
-    private String password;
-
     @NotBlank(message = "Le nom est obligatoire")
     @Size(max = 100, message = "Le nom ne doit pas dépasser 100 caractères")
     private String nom;

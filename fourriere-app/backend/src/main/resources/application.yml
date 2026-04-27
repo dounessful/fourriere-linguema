@@ -3,6 +3,18 @@ spring:
     active: dev
   application:
     name: fourriere-backend
+
+# ---------------------------------------------------------------------
+# Keycloak Admin API — utilisé pour provisionner les users applicatifs
+# ---------------------------------------------------------------------
+keycloak:
+  admin:
+    url: ${KEYCLOAK_ADMIN_URL:http://localhost:8280}
+    realm: ${KEYCLOAK_ADMIN_REALM:fourriere}
+    client-id: ${KEYCLOAK_ADMIN_CLIENT_ID:fourriere-admin-sync}
+    client-secret: ${KEYCLOAK_ADMIN_CLIENT_SECRET:}
+    enabled: ${KEYCLOAK_ADMIN_ENABLED:true}
+
   servlet:
     multipart:
       max-file-size: 5MB

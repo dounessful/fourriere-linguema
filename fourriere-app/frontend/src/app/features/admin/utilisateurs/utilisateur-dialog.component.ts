@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -11,8 +11,9 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { UtilisateurService } from '../../../core/services/utilisateur.service';
 import { CommuneService } from '../../../core/services/commune.service';
-import { Utilisateur, UtilisateurRequest, Role, RoleLabels } from '../../../core/models/auth.model';
+import { Utilisateur, UtilisateurRequest, Role } from '../../../core/models/auth.model';
 import { Commune } from '../../../core/models/commune.model';
+import { TempPasswordDialogComponent } from './temp-password-dialog.component';
 
 @Component({
   selector: 'app-utilisateur-dialog',
@@ -30,7 +31,7 @@ import { Commune } from '../../../core/models/commune.model';
     MatProgressSpinnerModule
   ],
   template: `
-    <h2 mat-dialog-title>{{ isEdit ? 'Modifier l\'utilisateur' : 'Nouvel utilisateur' }}</h2>
+    <h2 mat-dialog-title>{{ isEdit ? 'Modifier l\\'utilisateur' : 'Nouvel utilisateur' }}</h2>
     <mat-dialog-content>
       <form #form="ngForm">
         <mat-form-field appearance="outline" class="full-width">
@@ -41,18 +42,6 @@ import { Commune } from '../../../core/models/commune.model';
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Email</mat-label>
           <input matInput type="email" [(ngModel)]="utilisateur.email" name="email" required email />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>{{ isEdit ? 'Nouveau mot de passe (optionnel)' : 'Mot de passe' }}</mat-label>
-          <input
-            matInput
-            type="password"
-            [(ngModel)]="utilisateur.password"
-            name="password"
-            [required]="!isEdit"
-            minlength="6"
-          />
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
@@ -78,6 +67,13 @@ import { Commune } from '../../../core/models/commune.model';
         <mat-checkbox [(ngModel)]="utilisateur.actif" name="actif">
           Compte actif
         </mat-checkbox>
+
+        @if (!isEdit) {
+          <p class="info">
+            Un mot de passe temporaire sera généré automatiquement.
+            L'utilisateur devra le changer à sa première connexion.
+          </p>
+        }
       </form>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
@@ -122,6 +118,15 @@ import { Commune } from '../../../core/models/commune.model';
       color: var(--text-2);
     }
 
+    .info {
+      margin-top: var(--s-3);
+      padding: var(--s-3);
+      background: var(--bg-subtle);
+      border-radius: var(--r-md);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
     :host ::ng-deep mat-dialog-actions {
       padding: var(--s-4) var(--s-6);
       border-top: 1px solid var(--border);
@@ -153,6 +158,7 @@ export class UtilisateurDialogComponent {
   private utilisateurService = inject(UtilisateurService);
   private communeService = inject(CommuneService);
   private snackBar = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
 
   Role = Role;
   isEdit: boolean;
@@ -162,7 +168,6 @@ export class UtilisateurDialogComponent {
   utilisateur: UtilisateurRequest = {
     nom: '',
     email: '',
-    password: '',
     role: Role.ADMIN,
     communeId: undefined,
     actif: true
@@ -174,7 +179,6 @@ export class UtilisateurDialogComponent {
       this.utilisateur = {
         nom: this.data.nom,
         email: this.data.email,
-        password: '',
         role: this.data.role,
         communeId: this.data.communeId,
         actif: this.data.actif
@@ -194,21 +198,40 @@ export class UtilisateurDialogComponent {
   save(): void {
     this.saving = true;
 
-    const request = this.isEdit
-      ? this.utilisateurService.update(this.data!.id, this.utilisateur)
-      : this.utilisateurService.create(this.utilisateur);
+    if (this.isEdit) {
+      this.utilisateurService.update(this.data!.id, this.utilisateur).subscribe({
+        next: () => {
+          this.saving = false;
+          this.snackBar.open('Utilisateur modifié', 'OK', { duration: 3000 });
+          this.dialogRef.close(true);
+        },
+        error: (err) => this.handleError(err)
+      });
+    } else {
+      this.utilisateurService.create(this.utilisateur).subscribe({
+        next: (result) => {
+          this.saving = false;
+          this.dialogRef.close(true);
+          // Affiche le mot de passe temporaire — visible une seule fois
+          this.dialog.open(TempPasswordDialogComponent, {
+            width: '480px',
+            disableClose: true,
+            data: {
+              title: 'Utilisateur créé',
+              subtitle: 'Transmettez ces identifiants à l\'utilisateur :',
+              email: result.utilisateur.email,
+              password: result.temporaryPassword
+            }
+          });
+        },
+        error: (err) => this.handleError(err)
+      });
+    }
+  }
 
-    request.subscribe({
-      next: () => {
-        this.saving = false;
-        this.snackBar.open(this.isEdit ? 'Utilisateur modifié' : 'Utilisateur créé', 'OK', { duration: 3000 });
-        this.dialogRef.close(true);
-      },
-      error: (err) => {
-        this.saving = false;
-        const message = err.error?.message || 'Erreur lors de l\'enregistrement';
-        this.snackBar.open(message, 'OK', { duration: 5000 });
-      }
-    });
+  private handleError(err: any): void {
+    this.saving = false;
+    const message = err.error?.message || 'Erreur lors de l\'enregistrement';
+    this.snackBar.open(message, 'OK', { duration: 5000 });
   }
 }

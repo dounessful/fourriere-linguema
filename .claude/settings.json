@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls target/*.jar)",
+      "Bash(ls dist/fourriere-frontend/browser/styles*.css)",
+      "Bash(grep -rn \"ecfdf5\\\\|d1fae5\\\\|6ee7b7\\\\|f0fdf4\\\\|15803d\\\\|14532d\\\\|166534\\\\|rgba\\(20, 83\\\\|rgba\\(21, 128\" d:/Douness/LINGUEMA/projet-fourriere/fourriere-app/frontend/src/app --include=*.ts --include=*.scss)",
+      "Bash(docker ps:*)",
+      "Bash(ls -la d:/Douness/LINGUEMA/projet-fourriere/fourriere-app/frontend/src/assets/photo-*)",
+      "Bash(npx tsc *)",
+      "Bash(mvn clean *)",
+      "Bash(node tools/set-env.js)",
+      "Bash(mvn package *)",
+      "Bash(rm d:/Douness/LINGUEMA/projet-fourriere/fourriere-app/frontend/src/assets/photo-c.png)",
+      "Bash(git add *)",
+      "Bash(git reset *)",
+      "Bash(./mvnw clean *)",
+      "Bash(mvn -q -DskipTests clean compile)",
+      "Bash(mvn -DskipTests clean compile)",
+      "Bash(mvn -DskipTests test-compile)",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('keycloak/fourriere-realm.json','utf8'\\)\\); console.log\\('valid JSON'\\)\")"
+    ]
+  }
+}

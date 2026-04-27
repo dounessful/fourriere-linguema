@@ -82,6 +82,11 @@ services:
       # Rate limit : IP(s) des proxies de confiance (Caddy container + edges Cloudflare)
       # Caddy tourne sur le même host et reverse-proxy vers backend → remote addr = 172.x
       RATE_LIMIT_TRUSTED_PROXIES: ${RATE_LIMIT_TRUSTED_PROXIES:-}
+      # Keycloak Admin API (provisioning) — pointe vers le conteneur interne
+      KEYCLOAK_ADMIN_URL: ${KEYCLOAK_ADMIN_URL:-http://keycloak:8080}
+      KEYCLOAK_ADMIN_REALM: ${KEYCLOAK_ADMIN_REALM:-fourriere}
+      KEYCLOAK_ADMIN_CLIENT_ID: ${KEYCLOAK_ADMIN_CLIENT_ID:-fourriere-admin-sync}
+      KEYCLOAK_ADMIN_CLIENT_SECRET: ${KEYCLOAK_ADMIN_CLIENT_SECRET:?KEYCLOAK_ADMIN_CLIENT_SECRET required}
     networks:
       - internal
 
