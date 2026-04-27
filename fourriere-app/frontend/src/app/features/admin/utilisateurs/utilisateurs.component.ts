@@ -298,7 +298,7 @@ export class UtilisateursComponent implements OnInit {
 
   openDialog(utilisateur?: Utilisateur): void {
     const dialogRef = this.dialog.open(UtilisateurDialogComponent, {
-      width: '400px',
+      width: '480px',
       data: utilisateur ? { ...utilisateur } : null
     });
 

@@ -96,13 +96,24 @@ import { TempPasswordDialogComponent } from './temp-password-dialog.component';
       padding: var(--s-5) var(--s-6) var(--s-3);
     }
 
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-4);
+      padding-top: var(--s-2);
+    }
+
     .full-width {
       width: 100%;
-      margin-bottom: var(--s-1);
     }
 
     :host ::ng-deep .mat-mdc-form-field {
       font-size: 14px;
+      width: 100%;
+    }
+
+    :host ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+      display: none;
     }
 
     :host ::ng-deep .mat-mdc-text-field-wrapper {
@@ -110,21 +121,31 @@ import { TempPasswordDialogComponent } from './temp-password-dialog.component';
     }
 
     :host ::ng-deep mat-dialog-content {
-      padding: var(--s-2) var(--s-6);
+      padding: var(--s-3) var(--s-6) var(--s-2);
+      max-height: 70vh;
     }
 
     mat-checkbox {
-      margin-top: var(--s-2);
       color: var(--text-2);
     }
 
+    :host ::ng-deep mat-checkbox.mat-mdc-checkbox-checked .mdc-checkbox__background {
+      background-color: var(--brand) !important;
+      border-color: var(--brand) !important;
+    }
+
+    :host ::ng-deep mat-checkbox .mdc-form-field {
+      font-size: 14px;
+    }
+
     .info {
-      margin-top: var(--s-3);
       padding: var(--s-3);
-      background: var(--bg-subtle);
+      background: var(--brand-soft);
+      border: 1px solid var(--brand-soft-border, rgba(185, 28, 28, 0.15));
       border-radius: var(--r-md);
-      font-size: 12px;
-      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-2);
     }
 
     :host ::ng-deep mat-dialog-actions {
