@@ -68,57 +68,52 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
       </div>
 
       <div class="container">
-        <!-- Stats Cards -->
+        <!-- Stats Cards (compact) -->
         @if (stats) {
           <div class="stats-grid">
-            <mat-card class="stat-card">
-              <mat-card-content>
-                <div class="stat-icon total">
-                  <svg viewBox="0 0 24 24" width="28" height="28">
-                    <path fill="currentColor" d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5H6.5C5.84 5 5.29 5.42 5.08 6.01L3 12V20C3 20.55 3.45 21 4 21H5C5.55 21 6 20.55 6 20V19H18V20C18 20.55 18.45 21 19 21H20C20.55 21 21 20.55 21 20V12L18.92 6.01Z"/>
-                  </svg>
-                </div>
-                <div class="stat-content">
-                  <span class="stat-value">{{ stats.totalVehicules }}</span>
-                  <span class="stat-label">Total véhicules</span>
-                </div>
-              </mat-card-content>
-            </mat-card>
+            <div class="stat-card">
+              <span class="stat-icon total">
+                <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5H6.5C5.84 5 5.29 5.42 5.08 6.01L3 12V20C3 20.55 3.45 21 4 21H5C5.55 21 6 20.55 6 20V19H18V20C18 20.55 18.45 21 19 21H20C20.55 21 21 20.55 21 20V12L18.92 6.01Z"/></svg>
+              </span>
+              <div class="stat-content">
+                <span class="stat-label">Total véhicules</span>
+                <span class="stat-value">{{ stats.totalVehicules }}</span>
+              </div>
+            </div>
 
-            <mat-card class="stat-card">
-              <mat-card-content>
-                <div class="stat-icon active">
-                  <svg viewBox="0 0 24 24" width="28" height="28">
-                    <path fill="currentColor" d="M13 3H6v18h4v-6h3c3.31 0 6-2.69 6-6s-2.69-6-6-6zm.2 8H10V7h3.2c1.1 0 2 .9 2 2s-.9 2-2 2z"/>
-                  </svg>
-                </div>
-                <div class="stat-content">
-                  <span class="stat-value">{{ stats.vehiculesEnCours }}</span>
-                  <span class="stat-label">En fourrière</span>
-                </div>
-              </mat-card-content>
-            </mat-card>
+            <div class="stat-card">
+              <span class="stat-icon active">
+                <span class="dot"></span>
+              </span>
+              <div class="stat-content">
+                <span class="stat-label">En fourrière</span>
+                <span class="stat-value">{{ stats.vehiculesEnCours }}</span>
+              </div>
+            </div>
 
-            <mat-card class="stat-card">
-              <mat-card-content>
-                <div class="stat-icon recovered">
-                  <svg viewBox="0 0 24 24" width="28" height="28">
-                    <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                  </svg>
-                </div>
-                <div class="stat-content">
-                  <span class="stat-value">{{ stats.vehiculesRecuperesCeMois }}</span>
-                  <span class="stat-label">Récupérés ce mois</span>
-                </div>
-              </mat-card-content>
-            </mat-card>
+            <div class="stat-card">
+              <span class="stat-icon recovered">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+              </span>
+              <div class="stat-content">
+                <span class="stat-label">Récupérés ce mois</span>
+                <span class="stat-value">{{ stats.vehiculesRecuperesCeMois }}</span>
+              </div>
+            </div>
           </div>
         }
 
         <!-- Data Table Card -->
         <mat-card class="table-card">
           <div class="table-header">
-            <h2>Liste des véhicules</h2>
+            <div class="title-row">
+              <h2>Liste des véhicules</h2>
+              @if (!loading) {
+                <span class="results-count">
+                  · {{ totalElements }} {{ totalElements > 1 ? 'résultats' : 'résultat' }}
+                </span>
+              }
+            </div>
 
             <div class="filters">
               <mat-form-field appearance="outline" class="search-field">
@@ -147,6 +142,19 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
                 <mat-date-range-picker #picker></mat-date-range-picker>
               </mat-form-field>
 
+              <button mat-stroked-button [matMenuTriggerFor]="presetsMenu" class="preset-btn" [class.preset-btn-active]="!!activePreset" type="button">
+                <mat-icon>schedule</mat-icon>
+                <span>{{ activePreset ? presetLabel(activePreset) : 'Plage rapide' }}</span>
+                <mat-icon class="chevron">expand_more</mat-icon>
+              </button>
+              <mat-menu #presetsMenu="matMenu">
+                <button mat-menu-item (click)="applyPreset('today')" [class.menu-active]="activePreset === 'today'">Aujourd'hui</button>
+                <button mat-menu-item (click)="applyPreset('7d')" [class.menu-active]="activePreset === '7d'">7 derniers jours</button>
+                <button mat-menu-item (click)="applyPreset('30d')" [class.menu-active]="activePreset === '30d'">30 derniers jours</button>
+                <button mat-menu-item (click)="applyPreset('month')" [class.menu-active]="activePreset === 'month'">Ce mois-ci</button>
+                <button mat-menu-item (click)="applyPreset('year')" [class.menu-active]="activePreset === 'year'">Cette année</button>
+              </mat-menu>
+
               <mat-form-field appearance="outline" class="status-field">
                 <mat-label>Statut</mat-label>
                 <mat-select [(ngModel)]="filterRecupere" (selectionChange)="applyFilter()">
@@ -160,14 +168,6 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
                 <mat-icon>refresh</mat-icon>
                 <span>Réinitialiser</span>
               </button>
-            </div>
-
-            <div class="presets" role="group" aria-label="Plages prédéfinies">
-              <button type="button" class="preset" [class.preset-active]="activePreset === 'today'" (click)="applyPreset('today')">Aujourd'hui</button>
-              <button type="button" class="preset" [class.preset-active]="activePreset === '7d'" (click)="applyPreset('7d')">7 derniers jours</button>
-              <button type="button" class="preset" [class.preset-active]="activePreset === '30d'" (click)="applyPreset('30d')">30 derniers jours</button>
-              <button type="button" class="preset" [class.preset-active]="activePreset === 'month'" (click)="applyPreset('month')">Ce mois-ci</button>
-              <button type="button" class="preset" [class.preset-active]="activePreset === 'year'" (click)="applyPreset('year')">Cette année</button>
             </div>
           </div>
 
@@ -220,12 +220,12 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
                     <td mat-cell *matCellDef="let v">
                       @if (v.recupere) {
                         <span class="status-badge status-recovered">
-                          <mat-icon>check_circle</mat-icon>
+                          <span class="status-dot"></span>
                           Récupéré
                         </span>
                       } @else {
                         <span class="status-badge status-active">
-                          <mat-icon>local_parking</mat-icon>
+                          <span class="status-dot"></span>
                           En fourrière
                         </span>
                       }
@@ -362,73 +362,64 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: var(--s-4);
-      margin-bottom: var(--s-6);
+      gap: var(--s-3);
+      margin-bottom: var(--s-5);
     }
 
     .stat-card {
-      border-radius: var(--r-lg) !important;
-      border: 1px solid var(--border) !important;
-      box-shadow: var(--shadow-1) !important;
-      background: var(--surface) !important;
-      overflow: hidden;
-
-      mat-card-content {
-        display: flex;
-        align-items: center;
-        gap: var(--s-3);
-        padding: var(--s-4) var(--s-5) !important;
-      }
+      display: flex;
+      align-items: center;
+      gap: var(--s-3);
+      padding: var(--s-3) var(--s-4);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      box-shadow: var(--shadow-1);
     }
 
     .stat-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: var(--r-md);
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
       background: var(--brand-soft);
       color: var(--brand);
-
-      &.total {
-        background: var(--brand-soft);
-        color: var(--brand);
-      }
-
-      &.active {
-        background: var(--brand-soft);
-        color: var(--brand);
-      }
-
-      &.recovered {
-        background: var(--brand-soft);
-        color: var(--brand);
-      }
-
-      svg {
-        width: 22px;
-        height: 22px;
-      }
+    }
+    .stat-icon .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--brand);
+      box-shadow: 0 0 0 4px rgba(185, 28, 28, 0.14);
+    }
+    .stat-icon.recovered {
+      background: #dcfce7;
+      color: #15803d;
     }
 
     .stat-content {
       display: flex;
       flex-direction: column;
-    }
-
-    .stat-value {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1.2;
+      min-width: 0;
     }
 
     .stat-label {
-      font-size: 13px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
       color: var(--text-muted);
-      margin-top: 2px;
+    }
+
+    .stat-value {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.1;
+      letter-spacing: -0.01em;
     }
 
     /* Table Card */
@@ -515,35 +506,60 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
       }
     }
 
-    /* Presets row */
-    .presets {
-      display: flex;
-      flex-wrap: wrap;
+    /* Preset dropdown button */
+    .preset-btn {
+      height: 40px;
+      padding: 0 12px !important;
+      font-size: 13px;
+      color: var(--text-2) !important;
+      border-color: var(--border) !important;
+      border-radius: var(--r-md) !important;
+      display: inline-flex !important;
+      align-items: center;
       gap: 6px;
-      margin-top: var(--s-3);
+      flex-shrink: 0;
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+
+      .chevron {
+        font-size: 16px !important;
+        width: 16px !important;
+        height: 16px !important;
+        margin-left: 2px;
+        color: var(--text-muted);
+      }
     }
-    .preset {
-      padding: 6px 12px;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-2);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--r-pill);
-      cursor: pointer;
-      transition: all 0.15s ease;
+    .preset-btn-active {
+      background: var(--brand-soft) !important;
+      color: var(--brand) !important;
+      border-color: var(--brand) !important;
+
+      .chevron { color: var(--brand) !important; }
     }
-    .preset:hover {
-      border-color: var(--border-strong);
-      color: var(--text);
-    }
-    .preset-active {
+    ::ng-deep .menu-active {
       background: var(--brand-soft);
-      color: var(--brand);
-      border-color: var(--brand);
+      color: var(--brand) !important;
+      font-weight: 600;
     }
-    .preset-active:hover {
-      color: var(--brand);
+
+    /* Title row + results count */
+    .title-row {
+      display: flex;
+      align-items: baseline;
+      gap: var(--s-2);
+      margin-bottom: var(--s-4);
+    }
+    .title-row h2 {
+      margin: 0 !important;
+    }
+    .results-count {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
     }
 
     /* Loading */
@@ -641,7 +657,7 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
     .status-badge {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
       padding: 0 10px;
       height: 24px;
       border-radius: var(--r-pill);
@@ -649,20 +665,30 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
       font-weight: 600;
       white-space: nowrap;
 
-      mat-icon {
-        font-size: 14px;
-        width: 14px;
-        height: 14px;
+      .status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        flex-shrink: 0;
       }
 
       &.status-active {
         background: var(--brand-soft);
         color: var(--brand);
+
+        .status-dot {
+          background: var(--brand);
+          box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.18);
+        }
       }
 
       &.status-recovered {
         background: #ecfdf5;
         color: #166534;
+
+        .status-dot {
+          background: #16a34a;
+        }
       }
     }
 
@@ -877,6 +903,17 @@ export class DashboardComponent implements OnInit {
     } else if (!this.dateDebut && !this.dateFin) {
       this.applyFilter();
     }
+  }
+
+  presetLabel(preset: 'today' | '7d' | '30d' | 'month' | 'year'): string {
+    const labels = {
+      today: "Aujourd'hui",
+      '7d': '7 derniers jours',
+      '30d': '30 derniers jours',
+      month: 'Ce mois-ci',
+      year: 'Cette année'
+    };
+    return labels[preset];
   }
 
   applyPreset(preset: 'today' | '7d' | '30d' | 'month' | 'year'): void {
