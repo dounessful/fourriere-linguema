@@ -31,6 +31,10 @@ import { AuthService } from '../../../core/services/auth.service';
               <circle cx="16.5" cy="16.5" r="2.5"/>
             </svg>
           </span>
+          <span class="brand-text">
+            <span class="brand-name">Linguema Fourrière</span>
+            <span class="brand-sub">Service public de recherche</span>
+          </span>
         </a>
 
         @if (authService.isAuthenticated()) {
@@ -125,7 +129,7 @@ import { AuthService } from '../../../core/services/auth.service';
     }
 
     .brand-logo {
-      height: 65px;
+      height: 44px;
       width: auto;
       object-fit: contain;
     }
@@ -151,6 +155,7 @@ import { AuthService } from '../../../core/services/auth.service';
       font-size: 15px;
       font-weight: 600;
       letter-spacing: -0.01em;
+      color: var(--text);
     }
 
     .brand-sub {
@@ -159,6 +164,10 @@ import { AuthService } from '../../../core/services/auth.service';
       letter-spacing: 0.02em;
 
       @media (max-width: 600px) { display: none; }
+    }
+
+    @media (max-width: 480px) {
+      .brand-text { display: none; }
     }
 
     .nav {
