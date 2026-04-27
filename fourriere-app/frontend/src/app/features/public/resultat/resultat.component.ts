@@ -6,6 +6,7 @@ import { VehiculeService } from '../../../core/services/vehicule.service';
 import { Vehicule } from '../../../core/models/vehicule.model';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import { CarteLeafletComponent } from '../../../shared/components/carte-leaflet/carte-leaflet.component';
+import { PhotoLightboxComponent } from '../../../shared/components/photo-lightbox/photo-lightbox.component';
 import { DateFrPipe } from '../../../shared/pipes/date-fr.pipe';
 
 @Component({
@@ -17,6 +18,7 @@ import { DateFrPipe } from '../../../shared/pipes/date-fr.pipe';
     MatIconModule,
     LoadingSpinnerComponent,
     CarteLeafletComponent,
+    PhotoLightboxComponent,
     DateFrPipe,
     CurrencyPipe
   ],
@@ -77,6 +79,25 @@ import { DateFrPipe } from '../../../shared/pipes/date-fr.pipe';
                 </div>
               </div>
             </header>
+
+            <!-- ===== GALLERY ===== -->
+            @if (vehicule.photos && vehicule.photos.length > 0) {
+              <section class="gallery" aria-label="Photos du véhicule">
+                @for (photo of visiblePhotos(); track photo; let i = $index) {
+                  <button
+                    type="button"
+                    class="thumb"
+                    [class.thumb-overflow]="i === 2 && hiddenCount() > 0"
+                    (click)="openLightbox(i)"
+                    [attr.aria-label]="'Voir photo ' + (i + 1) + ' sur ' + vehicule.photos.length">
+                    <img [src]="photo" [alt]="'Photo ' + (i + 1)" loading="lazy" />
+                    @if (i === 2 && hiddenCount() > 0) {
+                      <span class="thumb-more">+{{ hiddenCount() }}</span>
+                    }
+                  </button>
+                }
+              </section>
+            }
 
             <!-- ===== CONTENT GRID ===== -->
             <section class="grid">
@@ -209,6 +230,12 @@ import { DateFrPipe } from '../../../shared/pipes/date-fr.pipe';
         </div>
       }
     </main>
+
+    <app-photo-lightbox
+      [photos]="vehicule?.photos || []"
+      [(open)]="lightboxOpen"
+      [startIndex]="lightboxIndex">
+    </app-photo-lightbox>
   `,
   styles: [`
     .page { display: flex; flex-direction: column; }
@@ -392,6 +419,66 @@ import { DateFrPipe } from '../../../shared/pipes/date-fr.pipe';
     .meta-vin {
       font-family: 'JetBrains Mono', ui-monospace, monospace;
       font-size: 11px;
+    }
+
+    /* ============ GALLERY ============ */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--s-3);
+      margin-bottom: var(--s-5);
+
+      @media (max-width: 640px) {
+        grid-template-columns: repeat(3, minmax(120px, 1fr));
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding-bottom: var(--s-2);
+        -webkit-overflow-scrolling: touch;
+      }
+    }
+    .thumb {
+      position: relative;
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      padding: 0;
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      overflow: hidden;
+      background: var(--bg-subtle);
+      cursor: pointer;
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+
+      @media (max-width: 640px) {
+        scroll-snap-align: start;
+        flex-shrink: 0;
+      }
+    }
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .thumb:hover {
+      border-color: var(--brand);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px -6px rgba(28, 25, 23, 0.18);
+    }
+    .thumb-overflow img {
+      filter: brightness(0.55);
+    }
+    .thumb-more {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      pointer-events: none;
     }
 
     /* ============ CONTENT GRID ============ */
@@ -653,6 +740,11 @@ export class ResultatComponent implements OnInit {
   vehicule: Vehicule | null = null;
   loading = true;
 
+  // Lightbox photo state
+  lightboxOpen = false;
+  lightboxIndex = 0;
+  private readonly THUMB_LIMIT = 3;
+
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) this.loadVehicule(+id);
@@ -675,5 +767,21 @@ export class ResultatComponent implements OnInit {
       violet: '#7c3aed', rose: '#ec4899'
     };
     return map[couleur.trim().toLowerCase()] ?? '#d6d3d1';
+  }
+
+  /** Vignettes affichées (max 3) */
+  visiblePhotos(): string[] {
+    return (this.vehicule?.photos ?? []).slice(0, this.THUMB_LIMIT);
+  }
+
+  /** Nombre de photos cachées au-delà des 3 vignettes (pour le badge "+N") */
+  hiddenCount(): number {
+    const total = this.vehicule?.photos?.length ?? 0;
+    return Math.max(0, total - this.THUMB_LIMIT);
+  }
+
+  openLightbox(thumbIndex: number): void {
+    this.lightboxIndex = thumbIndex;
+    this.lightboxOpen = true;
   }
 }
