@@ -56,7 +56,7 @@ import { AuthService } from '../../../core/services/auth.service';
             </span>
           </h1>
 
-          <p class="hero-lede">Recherche par plaque d'immatriculation.</p>
+          <p class="hero-lede">Recherche par plaque d'immatriculation ou numéro de série (VIN).</p>
 
           <form (ngSubmit)="rechercher()" class="search">
             <div class="search-field" [class.has-error]="!!error" [class.is-focused]="focused">
@@ -74,8 +74,8 @@ import { AuthService } from '../../../core/services/auth.service';
                 (focus)="focused = true"
                 (blur)="focused = false"
                 [disabled]="loading"
-                placeholder="DK-123-AB"
-                aria-label="Plaque d'immatriculation"
+                placeholder="Plaque (DK-123-AB) ou VIN"
+                aria-label="Plaque d'immatriculation ou numéro de série"
                 autocomplete="off"
                 spellcheck="false"
               />
@@ -131,7 +131,7 @@ import { AuthService } from '../../../core/services/auth.service';
                 </div>
                 <h3>Recherchez</h3>
               </div>
-              <p>Saisissez la plaque d'immatriculation de votre véhicule. La recherche est instantanée.</p>
+              <p>Saisissez la plaque d'immatriculation ou le numéro de série (VIN) de votre véhicule. La recherche est instantanée.</p>
             </li>
 
             <li class="col">
@@ -836,7 +836,7 @@ export class HomeComponent implements OnInit {
       },
       error: (err) => {
         this.loading = false;
-        if (err.status === 404) this.error = 'Aucun véhicule trouvé pour cette plaque.';
+        if (err.status === 404) this.error = 'Aucun véhicule trouvé pour cette plaque ou ce VIN.';
         else if (err.status === 429) this.error = 'Trop de recherches. Patientez quelques instants.';
         else this.error = 'Une erreur est survenue. Réessayez.';
       }

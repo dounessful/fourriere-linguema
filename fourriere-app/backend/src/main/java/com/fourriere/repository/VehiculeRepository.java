@@ -16,6 +16,8 @@ public interface VehiculeRepository extends JpaRepository<Vehicule, Long> {
 
     Optional<Vehicule> findByImmatriculation(String immatriculation);
 
+    Optional<Vehicule> findByNumeroSerie(String numeroSerie);
+
     boolean existsByImmatriculation(String immatriculation);
 
     @Query("SELECT v FROM Vehicule v WHERE " +

@@ -12,9 +12,9 @@ export class VehiculeService {
 
   constructor(private http: HttpClient) {}
 
-  recherche(immatriculation: string): Observable<Vehicule> {
+  recherche(plaqueOuVin: string): Observable<Vehicule> {
     return this.http.get<Vehicule>(`${this.apiUrl}/vehicules/recherche`, {
-      params: { immatriculation }
+      params: { q: plaqueOuVin }
     });
   }
 

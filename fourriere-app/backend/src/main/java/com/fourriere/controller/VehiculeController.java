@@ -17,9 +17,11 @@ public class VehiculeController {
     private final VehiculeService vehiculeService;
 
     @GetMapping("/recherche")
-    @Operation(summary = "Rechercher un véhicule", description = "Recherche un véhicule par sa plaque d'immatriculation")
-    public ResponseEntity<VehiculeResponse> recherche(@RequestParam String immatriculation) {
-        return ResponseEntity.ok(vehiculeService.rechercheParImmatriculation(immatriculation));
+    @Operation(summary = "Rechercher un véhicule",
+            description = "Recherche un véhicule par sa plaque d'immatriculation ou son numéro de série (VIN). " +
+                    "La plaque est essayée en premier, puis le VIN.")
+    public ResponseEntity<VehiculeResponse> recherche(@RequestParam String q) {
+        return ResponseEntity.ok(vehiculeService.recherche(q));
     }
 
     @GetMapping("/{id}")

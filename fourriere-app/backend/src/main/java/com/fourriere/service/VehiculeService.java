@@ -38,10 +38,16 @@ public class VehiculeService {
     private final CommuneRepository communeRepository;
     private final TransfertVehiculeRepository transfertRepository;
 
-    public VehiculeResponse rechercheParImmatriculation(String immatriculation) {
-        String normalizedImmat = ImmatriculationUtil.normalize(immatriculation);
-        Vehicule vehicule = vehiculeRepository.findByImmatriculation(normalizedImmat)
-                .orElseThrow(() -> new ResourceNotFoundException("Véhicule", "immatriculation", immatriculation));
+    /**
+     * Recherche publique par plaque OU VIN.
+     * On essaie d'abord la plaque (cas le plus fréquent), puis le VIN si pas de match.
+     * La normalisation est la même pour les deux : majuscules + retrait espaces/tirets.
+     */
+    public VehiculeResponse recherche(String q) {
+        String normalized = ImmatriculationUtil.normalize(q);
+        Vehicule vehicule = vehiculeRepository.findByImmatriculation(normalized)
+                .or(() -> vehiculeRepository.findByNumeroSerie(normalized))
+                .orElseThrow(() -> new ResourceNotFoundException("Véhicule", "plaque ou VIN", q));
         return toResponse(vehicule);
     }
 
