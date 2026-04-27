@@ -19,7 +19,7 @@
                     name="username"
                     class="form-input <#if messagesPerField.existsError('username')>error</#if>"
                     autofocus
-                    value="${(auth.attemptedUsername!'')}"
+                    value="${(auth.attemptedUsername)!''}"
                     autocomplete="off"
                     dir="ltr"
                 />

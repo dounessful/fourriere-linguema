@@ -2,7 +2,7 @@
 <@layout.registrationLayout displayMessage=!messagesPerField.existsError('username','password'); section>
     <#if section = "header">
         <h1 class="auth-title">Se connecter</h1>
-        <p class="auth-subtitle">Accédez à votre espace ${realm.displayName!'Fourrière'}</p>
+        <p class="auth-subtitle">Accédez à votre espace ${(realm.displayName)!'Fourrière'}</p>
     <#elseif section = "form">
         <#if realm.password>
             <form id="kc-form-login" action="${url.loginAction}" method="post" novalidate>
@@ -17,7 +17,7 @@
                         id="username"
                         class="form-input <#if messagesPerField.existsError('username','password')>error</#if>"
                         name="username"
-                        value="${(login.username!'')}"
+                        value="${(login.username)!''}"
                         type="text"
                         autofocus
                         autocomplete="off"
@@ -65,7 +65,7 @@
                     </#if>
                 </div>
 
-                <input type="hidden" id="id-hidden-input" name="credentialId" <#if auth.selectedCredential?has_content>value="${auth.selectedCredential}"</#if>/>
+                <input type="hidden" id="id-hidden-input" name="credentialId" <#if auth?? && (auth.selectedCredential)?has_content>value="${auth.selectedCredential}"</#if>/>
                 <button tabindex="4" class="btn btn-primary" name="login" id="kc-login" type="submit">
                     ${msg("doLogIn")}
                 </button>
