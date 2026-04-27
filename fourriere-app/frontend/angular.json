@@ -34,7 +34,8 @@
               "src/favicon.ico",
               "src/assets",
               { "glob": "_headers", "input": "src", "output": "/" },
-              { "glob": "_redirects", "input": "src", "output": "/" }
+              { "glob": "_redirects", "input": "src", "output": "/" },
+              { "glob": "**/*", "input": "node_modules/leaflet/dist/images", "output": "assets/leaflet" }
             ],
             "styles": [
               "@angular/material/prebuilt-themes/indigo-pink.css",

@@ -50,10 +50,12 @@ export class CarteLeafletComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   private fixLeafletIcons(): void {
+    // Icônes servies depuis assets/leaflet (copiées au build depuis node_modules/leaflet/dist/images).
+    // Évite la dépendance CDN externe et le besoin d'élargir le CSP img-src.
     const iconDefault = L.icon({
-      iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
-      iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
-      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+      iconRetinaUrl: 'assets/leaflet/marker-icon-2x.png',
+      iconUrl: 'assets/leaflet/marker-icon.png',
+      shadowUrl: 'assets/leaflet/marker-shadow.png',
       iconSize: [25, 41],
       iconAnchor: [12, 41],
       popupAnchor: [1, -34],

@@ -35,53 +35,43 @@ import { DateFrPipe } from '../../../shared/pipes/date-fr.pipe';
               Nouvelle recherche
             </a>
 
-            <!-- ===== REWARD BADGE — englobe toutes les infos véhicule ===== -->
-            <header class="badge">
-              <div class="badge-strip">
-                <div class="strip-left">
-                  <span class="strip-check">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <!-- ===== HERO — identification du véhicule ===== -->
+            <header class="hero" [class.hero-restitue]="vehicule.recupere">
+              <div class="hero-status">
+                <span class="status-indicator">
+                  @if (vehicule.recupere) {
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                       <polyline points="20 6 9 17 4 12"/>
                     </svg>
-                  </span>
-                  <span class="strip-text">Véhicule localisé</span>
-                </div>
-                <div class="strip-tags">
-                  @if (vehicule.recupere) {
-                    <span class="tag tag-success">
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                      Restitué
-                    </span>
                   } @else {
-                    <span class="tag tag-active">
-                      <span class="ping"></span>
-                      En fourrière
-                    </span>
+                    <span class="status-dot"></span>
                   }
-                  @if (vehicule.transfere) {
-                    <span class="tag tag-info">
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
-                      Transféré le {{ vehicule.derniereDateTransfert | dateFr }}
-                    </span>
-                  }
-                </div>
+                </span>
+                <span class="status-label">
+                  @if (vehicule.recupere) { Véhicule restitué }
+                  @else { Véhicule en fourrière }
+                </span>
+                @if (vehicule.transfere) {
+                  <span class="status-aside">·  Transféré le {{ vehicule.derniereDateTransfert | dateFr }}</span>
+                }
               </div>
 
-              <div class="badge-body">
-                <div class="badge-plate">
-                  <span class="plate-label">Plaque</span>
-                  <span class="plate-value">{{ vehicule.immatriculation }}</span>
+              <div class="hero-body">
+                <div class="plate" aria-label="Numéro d'immatriculation">
+                  <span class="plate-flag">SN</span>
+                  <span class="plate-num">{{ vehicule.immatriculation }}</span>
                 </div>
-                <div class="badge-vehicle">
+
+                <div class="hero-info">
                   <h1>{{ vehicule.marque }} {{ vehicule.modele }}</h1>
-                  <div class="vehicle-sub">
-                    <span class="sub-item">
-                      <span class="sub-dot" [style.background]="colorDot(vehicule.couleur)"></span>
+                  <div class="hero-meta">
+                    <span class="meta-item">
+                      <span class="color-dot" [style.background]="colorDot(vehicule.couleur)"></span>
                       {{ vehicule.couleur }}
                     </span>
                     @if (vehicule.numeroSerie) {
-                      <span class="sub-sep">·</span>
-                      <span class="sub-item mono">VIN&nbsp;{{ vehicule.numeroSerie }}</span>
+                      <span class="meta-sep" aria-hidden="true">·</span>
+                      <span class="meta-item meta-vin">VIN&nbsp;{{ vehicule.numeroSerie }}</span>
                     }
                   </div>
                 </div>
@@ -250,190 +240,158 @@ import { DateFrPipe } from '../../../shared/pipes/date-fr.pipe';
       &:hover { color: var(--text); border-color: var(--border-strong); }
     }
 
-    /* ============ REWARD BADGE — englobe tout ============ */
-    .badge {
-      position: relative;
-      background: linear-gradient(180deg, #ffffff 0%, #fef2f2 100%);
-      border: 1.5px solid var(--brand-soft-2);
-      border-radius: 14px;
+    /* ============ HERO — identification véhicule ============ */
+    .hero {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
       overflow: hidden;
       margin-bottom: var(--s-5);
-      box-shadow:
-        0 16px 36px -16px rgba(127, 29, 29, 0.22),
-        0 4px 10px -4px rgba(28, 25, 23, 0.06),
-        inset 0 1px 0 rgba(255, 255, 255, 0.9);
-      animation: pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0; left: 0; right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, var(--brand) 0%, #34d399 50%, var(--brand) 100%);
-      }
+      box-shadow: var(--shadow-1);
     }
 
-    @keyframes pop {
-      0%   { transform: scale(0.96); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    .badge-strip {
+    /* --- Status bar : rouge brand quand en fourrière, neutre quand restitué --- */
+    .hero-status {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: var(--s-3);
-      padding: var(--s-3) var(--s-5);
-      background: rgba(236, 253, 245, 0.7);
-      border-bottom: 1px solid var(--brand-soft-2);
-      flex-wrap: wrap;
-
-      @media (max-width: 600px) { padding: var(--s-2) var(--s-4); }
-    }
-
-    .strip-left {
-      display: inline-flex;
-      align-items: center;
       gap: var(--s-2);
-    }
-
-    .strip-check {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
+      padding: var(--s-3) var(--s-5);
       background: var(--brand);
       color: #fff;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+
+      @media (max-width: 600px) { padding: var(--s-3) var(--s-4); }
+    }
+    .hero-restitue .hero-status {
+      background: var(--bg-subtle);
+      color: var(--text-2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .status-indicator {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 2px 6px -1px rgba(185, 28, 28, 0.45);
+      width: 18px;
+      height: 18px;
+    }
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.18);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    .hero-restitue .status-dot {
+      background: var(--success, #059669);
+      box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.12);
+    }
+    @keyframes pulse-dot {
+      0%,100% { box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.18); }
+      50%     { box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.06); }
     }
 
-    .strip-text {
+    .status-label { font-weight: 600; }
+
+    .status-aside {
+      margin-left: auto;
       font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--brand-dark);
+      font-weight: 400;
+      opacity: 0.85;
+
+      @media (max-width: 600px) { display: none; }
     }
 
-    .strip-tags {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    /* Body */
-    .badge-body {
+    /* --- Body : plaque + identité --- */
+    .hero-body {
       display: grid;
       grid-template-columns: auto 1fr;
-      gap: var(--s-6);
+      gap: var(--s-5);
       align-items: center;
-      padding: var(--s-5) var(--s-6);
+      padding: var(--s-5) var(--s-5);
 
-      @media (max-width: 600px) {
+      @media (max-width: 640px) {
         grid-template-columns: 1fr;
         gap: var(--s-4);
         padding: var(--s-4);
-        text-align: center;
-        justify-items: center;
       }
     }
 
-    .badge-plate {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      padding: var(--s-3) var(--s-5);
-      background: var(--surface);
-      border: 1px solid var(--brand-soft-2);
-      border-radius: 10px;
-      box-shadow: 0 4px 12px -6px rgba(127, 29, 29, 0.18);
+    /* Plaque type européenne : bande SN bleue + numéro mono */
+    .plate {
+      display: inline-flex;
+      align-items: stretch;
+      background: #fff;
+      border: 2px solid var(--text);
+      border-radius: 6px;
+      overflow: hidden;
+      flex-shrink: 0;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
-    .plate-label {
-      font-size: 9px;
+    .plate-flag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 10px;
+      background: #1e3a8a;
+      color: #fff;
+      font-size: 11px;
       font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--brand);
+      letter-spacing: 0.05em;
     }
-    .plate-value {
+    .plate-num {
+      padding: 10px 18px;
       font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
       font-size: 22px;
       font-weight: 700;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.06em;
       color: var(--text);
       line-height: 1;
 
-      @media (max-width: 600px) { font-size: 19px; }
-    }
-
-    .badge-vehicle {
-      min-width: 0;
-
-      h1 {
-        font-size: clamp(22px, 2.8vw, 28px);
-        letter-spacing: -0.018em;
-        margin-bottom: 6px;
-        line-height: 1.15;
-        color: var(--text);
+      @media (max-width: 600px) {
+        font-size: 18px;
+        padding: 9px 14px;
       }
     }
 
-    .vehicle-sub {
+    .hero-info {
+      min-width: 0;
+    }
+    .hero-info h1 {
+      font-size: clamp(20px, 2.4vw, 26px);
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      margin: 0 0 6px;
+      line-height: 1.2;
+      color: var(--text);
+    }
+
+    .hero-meta {
       font-size: 13px;
       color: var(--text-muted);
       display: flex;
       align-items: center;
       gap: var(--s-2);
       flex-wrap: wrap;
-
-      @media (max-width: 600px) { justify-content: center; }
     }
-
-    .sub-item {
+    .meta-item {
       display: inline-flex;
       align-items: center;
       gap: 6px;
     }
-
-    .sub-dot {
+    .color-dot {
       display: inline-block;
       width: 10px;
       height: 10px;
       border-radius: 50%;
       border: 1px solid rgba(28, 25, 23, 0.15);
     }
-
-    .sub-sep { opacity: 0.4; }
-    .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; }
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 10px;
-      border-radius: var(--r-pill);
+    .meta-sep { opacity: 0.4; }
+    .meta-vin {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
       font-size: 11px;
-      font-weight: 600;
-      border: 1px solid transparent;
-      white-space: nowrap;
-    }
-    .tag-active {
-      background: #fff;
-      color: var(--brand-dark);
-      border-color: var(--brand-soft-2);
-      .ping {
-        width: 6px; height: 6px; border-radius: 50%;
-        background: var(--brand);
-        box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.18);
-        animation: pulse 2s ease-in-out infinite;
-      }
-    }
-    .tag-success { background: #fff; color: var(--text-2); border-color: var(--border-strong); }
-    .tag-info { background: #fff; color: #1d4ed8; border-color: #bfdbfe; }
-    @keyframes pulse {
-      0%,100% { box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.18); }
-      50%     { box-shadow: 0 0 0 5px rgba(185, 28, 28, 0.08); }
     }
 
     /* ============ CONTENT GRID ============ */
