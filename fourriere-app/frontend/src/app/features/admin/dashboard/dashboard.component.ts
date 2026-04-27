@@ -182,9 +182,7 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
                   <!-- Immatriculation Column -->
                   <ng-container matColumnDef="immatriculation">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Immatriculation</th>
-                    <td mat-cell *matCellDef="let v">
-                      <span class="plate-badge">{{ v.immatriculation }}</span>
-                    </td>
+                    <td mat-cell *matCellDef="let v">{{ v.immatriculation }}</td>
                   </ng-container>
 
                   <!-- Vehicle Column -->
@@ -218,17 +216,7 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
                   <ng-container matColumnDef="recupere">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Statut</th>
                     <td mat-cell *matCellDef="let v">
-                      @if (v.recupere) {
-                        <span class="status-badge status-recovered">
-                          <span class="status-dot"></span>
-                          Récupéré
-                        </span>
-                      } @else {
-                        <span class="status-badge status-active">
-                          <span class="status-dot"></span>
-                          En fourrière
-                        </span>
-                      }
+                      {{ v.recupere ? 'Récupéré' : 'En fourrière' }}
                     </td>
                   </ng-container>
 
@@ -580,13 +568,13 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
     }
 
     .mat-mdc-header-cell {
-      font-weight: 600;
-      font-size: 10.5px;
+      font-weight: 700;
+      font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted) !important;
+      letter-spacing: 0.06em;
+      color: var(--text-2) !important;
       background: var(--bg-subtle) !important;
-      border-bottom: 1px solid var(--border) !important;
+      border-bottom: 1px solid var(--border-strong) !important;
       padding: 8px 12px !important;
       height: 36px !important;
     }
@@ -606,20 +594,6 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
       color: var(--text-2);
       border-bottom-color: var(--border) !important;
       padding: 6px 12px !important;
-    }
-
-    /* Plate Badge */
-    .plate-badge {
-      display: inline-block;
-      font-family: 'JetBrains Mono', 'Courier New', monospace;
-      font-weight: 700;
-      font-size: 11.5px;
-      background: #1c1917;
-      color: #fef3c7;
-      padding: 3px 7px;
-      border-radius: var(--r-sm);
-      letter-spacing: 0.06em;
-      line-height: 1;
     }
 
     /* Vehicle Info */
@@ -658,45 +632,6 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
       white-space: nowrap;
       font-size: 12px;
       color: var(--text-2);
-    }
-
-    /* Status Badge */
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 0 8px;
-      height: 20px;
-      border-radius: var(--r-pill);
-      font-size: 11px;
-      font-weight: 600;
-      white-space: nowrap;
-
-      .status-dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        flex-shrink: 0;
-      }
-
-      &.status-active {
-        background: var(--brand-soft);
-        color: var(--brand);
-
-        .status-dot {
-          background: var(--brand);
-          box-shadow: 0 0 0 2px rgba(185, 28, 28, 0.18);
-        }
-      }
-
-      &.status-recovered {
-        background: #ecfdf5;
-        color: #166534;
-
-        .status-dot {
-          background: #16a34a;
-        }
-      }
     }
 
     /* Action Buttons */
