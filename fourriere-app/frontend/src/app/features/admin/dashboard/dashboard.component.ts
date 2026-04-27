@@ -237,16 +237,16 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
                     <th mat-header-cell *matHeaderCellDef>Actions</th>
                     <td mat-cell *matCellDef="let v">
                       <div class="action-buttons">
-                        <a mat-icon-button [routerLink]="['/resultat', v.id]" matTooltip="Voir détails">
+                        <a mat-icon-button [routerLink]="['/resultat', v.id]" matTooltip="Voir" class="act-btn">
                           <mat-icon>visibility</mat-icon>
                         </a>
-                        <a mat-icon-button [routerLink]="['/admin/vehicule', v.id]" matTooltip="Modifier">
+                        <a mat-icon-button [routerLink]="['/admin/vehicule', v.id]" matTooltip="Modifier" class="act-btn">
                           <mat-icon>edit</mat-icon>
                         </a>
-                        <button mat-icon-button [matMenuTriggerFor]="moreMenu" matTooltip="Plus d'actions">
+                        <button mat-icon-button [matMenuTriggerFor]="moreMenu" matTooltip="Plus d'actions" class="act-btn">
                           <mat-icon>more_vert</mat-icon>
                         </button>
-                        <mat-menu #moreMenu="matMenu">
+                        <mat-menu #moreMenu="matMenu" xPosition="before" class="actions-menu">
                           @if (!v.recupere) {
                             <button mat-menu-item (click)="marquerSortie(v)">
                               <mat-icon class="success-icon">check_circle</mat-icon>
@@ -254,8 +254,9 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
                             </button>
                             <button mat-menu-item (click)="transferer(v)">
                               <mat-icon>swap_horiz</mat-icon>
-                              <span>Transférer vers une autre fourrière</span>
+                              <span>Transférer</span>
                             </button>
+                            <div class="menu-divider"></div>
                           }
                           <button mat-menu-item (click)="deleteVehicule(v)" class="delete-action">
                             <mat-icon>delete</mat-icon>
@@ -580,17 +581,20 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
 
     .mat-mdc-header-cell {
       font-weight: 600;
-      font-size: 11px;
+      font-size: 10.5px;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.05em;
       color: var(--text-muted) !important;
       background: var(--bg-subtle) !important;
       border-bottom: 1px solid var(--border) !important;
+      padding: 8px 12px !important;
+      height: 36px !important;
     }
 
     .mat-mdc-row {
       transition: background-color var(--t-fast);
       border-bottom: 1px solid var(--border);
+      height: 44px !important;
 
       &:hover {
         background-color: var(--bg-subtle);
@@ -598,36 +602,39 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
     }
 
     .mat-mdc-cell {
-      font-size: 14px;
+      font-size: 12.5px;
       color: var(--text-2);
       border-bottom-color: var(--border) !important;
+      padding: 6px 12px !important;
     }
 
     /* Plate Badge */
     .plate-badge {
       display: inline-block;
-      font-family: 'Courier New', monospace;
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
       font-weight: 700;
-      font-size: 13px;
+      font-size: 11.5px;
       background: #1c1917;
       color: #fef3c7;
-      padding: 3px 8px;
+      padding: 3px 7px;
       border-radius: var(--r-sm);
       letter-spacing: 0.06em;
+      line-height: 1;
     }
 
     /* Vehicle Info */
     .vehicle-info {
       display: flex;
       flex-direction: column;
-      gap: 1px;
-      max-width: 160px;
+      gap: 0;
+      max-width: 180px;
       overflow: hidden;
+      line-height: 1.25;
     }
 
     .vehicle-name {
-      font-weight: 500;
-      font-size: 14px;
+      font-weight: 600;
+      font-size: 12.5px;
       color: var(--text);
       overflow: hidden;
       text-overflow: ellipsis;
@@ -635,7 +642,7 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
     }
 
     .vehicle-color {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-muted);
       overflow: hidden;
       text-overflow: ellipsis;
@@ -649,7 +656,7 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text-2);
     }
 
@@ -657,17 +664,17 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
     .status-badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 0 10px;
-      height: 24px;
+      gap: 5px;
+      padding: 0 8px;
+      height: 20px;
       border-radius: var(--r-pill);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
       white-space: nowrap;
 
       .status-dot {
-        width: 7px;
-        height: 7px;
+        width: 6px;
+        height: 6px;
         border-radius: 50%;
         flex-shrink: 0;
       }
@@ -678,7 +685,7 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
 
         .status-dot {
           background: var(--brand);
-          box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.18);
+          box-shadow: 0 0 0 2px rgba(185, 28, 28, 0.18);
         }
       }
 
@@ -692,38 +699,96 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
       }
     }
 
-    /* Action Buttons — no transitions, instant */
+    /* Action Buttons */
     .action-buttons {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 0;
       white-space: nowrap;
       flex-shrink: 0;
 
       a, button {
-        transition: none !important;
+        transition: background-color 0.12s ease, color 0.12s ease !important;
+      }
+
+      .act-btn {
+        width: 30px !important;
+        height: 30px !important;
+        padding: 0 !important;
+        line-height: 1 !important;
+        color: var(--text-muted);
+        border-radius: 6px;
+
+        ::ng-deep .mat-mdc-button-touch-target {
+          width: 30px !important;
+          height: 30px !important;
+        }
+
+        mat-icon {
+          font-size: 16px !important;
+          width: 16px !important;
+          height: 16px !important;
+          margin: 0 !important;
+        }
+
+        &:hover {
+          background-color: var(--bg-subtle) !important;
+          color: var(--text);
+        }
+
+        &.act-danger:hover {
+          background-color: #fef2f2 !important;
+          color: var(--brand);
+        }
       }
     }
 
     .mat-column-actions {
-      width: 140px;
-      min-width: 140px;
-      max-width: 140px;
+      width: 120px;
+      min-width: 120px;
+      max-width: 120px;
       overflow: visible !important;
       text-overflow: clip !important;
       padding-right: 8px !important;
+      text-align: right;
     }
 
-    ::ng-deep .success-icon {
-      color: #166534 !important;
+    /* Action Menu */
+    ::ng-deep .actions-menu .mat-mdc-menu-content {
+      padding: 4px !important;
     }
+    ::ng-deep .actions-menu .mat-mdc-menu-item {
+      min-height: 36px;
+      border-radius: var(--r-md);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-2);
 
-    ::ng-deep .delete-action {
-      color: var(--brand) !important;
-
-      mat-icon {
-        color: var(--brand) !important;
+      .mat-icon {
+        margin-right: 10px !important;
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: var(--text-muted);
       }
+
+      &:hover {
+        background: var(--bg-subtle);
+        color: var(--text);
+      }
+    }
+    ::ng-deep .actions-menu .success-icon { color: #16a34a !important; }
+    ::ng-deep .actions-menu .delete-action {
+      color: var(--brand) !important;
+      mat-icon { color: var(--brand) !important; }
+      &:hover {
+        background: #fef2f2;
+      }
+    }
+    ::ng-deep .actions-menu .menu-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 4px -4px;
     }
 
     /* No Data */
