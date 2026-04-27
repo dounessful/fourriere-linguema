@@ -16,6 +16,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { VehiculeService } from '../../../core/services/vehicule.service';
 import { Vehicule, Stats } from '../../../core/models/vehicule.model';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
@@ -44,6 +45,7 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
     MatDialogModule,
     MatSnackBarModule,
     MatTooltipModule,
+    MatDatepickerModule,
     LoadingSpinnerComponent,
     DateFrPipe
   ],
@@ -117,15 +119,16 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
         <mat-card class="table-card">
           <div class="table-header">
             <h2>Liste des véhicules</h2>
+
             <div class="filters">
               <mat-form-field appearance="outline" class="search-field">
-                <mat-label>Rechercher par plaque</mat-label>
+                <mat-label>Plaque</mat-label>
                 <mat-icon matPrefix>search</mat-icon>
                 <input
                   matInput
                   [(ngModel)]="searchImmat"
                   (keyup.enter)="applyFilter()"
-                  placeholder="Ex: AA123BB"
+                  placeholder="AA123BB"
                 />
                 @if (searchImmat) {
                   <button matSuffix mat-icon-button (click)="searchImmat = ''; applyFilter()">
@@ -134,19 +137,37 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
                 }
               </mat-form-field>
 
+              <mat-form-field appearance="outline" class="date-range-field">
+                <mat-label>Période d'entrée</mat-label>
+                <mat-date-range-input [rangePicker]="picker">
+                  <input matStartDate [(ngModel)]="dateDebut" placeholder="Du" (dateChange)="onDateChange()" />
+                  <input matEndDate [(ngModel)]="dateFin" placeholder="Au" (dateChange)="onDateChange()" />
+                </mat-date-range-input>
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker></mat-date-range-picker>
+              </mat-form-field>
+
               <mat-form-field appearance="outline" class="status-field">
                 <mat-label>Statut</mat-label>
                 <mat-select [(ngModel)]="filterRecupere" (selectionChange)="applyFilter()">
-                  <mat-option [value]="null">Tous les statuts</mat-option>
+                  <mat-option [value]="null">Tous</mat-option>
                   <mat-option [value]="false">En fourrière</mat-option>
                   <mat-option [value]="true">Récupérés</mat-option>
                 </mat-select>
               </mat-form-field>
 
-              <button mat-stroked-button (click)="resetFilters()" class="reset-btn" [disabled]="!searchImmat && filterRecupere === null">
+              <button mat-stroked-button (click)="resetFilters()" class="reset-btn" [disabled]="!hasActiveFilter()">
                 <mat-icon>refresh</mat-icon>
                 <span>Réinitialiser</span>
               </button>
+            </div>
+
+            <div class="presets" role="group" aria-label="Plages prédéfinies">
+              <button type="button" class="preset" [class.preset-active]="activePreset === 'today'" (click)="applyPreset('today')">Aujourd'hui</button>
+              <button type="button" class="preset" [class.preset-active]="activePreset === '7d'" (click)="applyPreset('7d')">7 derniers jours</button>
+              <button type="button" class="preset" [class.preset-active]="activePreset === '30d'" (click)="applyPreset('30d')">30 derniers jours</button>
+              <button type="button" class="preset" [class.preset-active]="activePreset === 'month'" (click)="applyPreset('month')">Ce mois-ci</button>
+              <button type="button" class="preset" [class.preset-active]="activePreset === 'year'" (click)="applyPreset('year')">Cette année</button>
             </div>
           </div>
 
@@ -441,7 +462,8 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
     }
 
     .search-field,
-    .status-field {
+    .status-field,
+    .date-range-field {
       ::ng-deep .mat-mdc-form-field-subscript-wrapper {
         display: none;
       }
@@ -463,12 +485,18 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
     }
 
     .search-field {
+      width: 240px;
+      flex-shrink: 0;
+    }
+
+    .date-range-field {
       flex: 1;
-      min-width: 220px;
+      min-width: 240px;
     }
 
     .status-field {
-      min-width: 170px;
+      width: 160px;
+      flex-shrink: 0;
     }
 
     .reset-btn {
@@ -485,6 +513,37 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
         width: 18px;
         height: 18px;
       }
+    }
+
+    /* Presets row */
+    .presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: var(--s-3);
+    }
+    .preset {
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-2);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-pill);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .preset:hover {
+      border-color: var(--border-strong);
+      color: var(--text);
+    }
+    .preset-active {
+      background: var(--brand-soft);
+      color: var(--brand);
+      border-color: var(--brand);
+    }
+    .preset-active:hover {
+      color: var(--brand);
     }
 
     /* Loading */
@@ -705,6 +764,7 @@ import { TransfertDialogComponent } from '../transferts/transfert-dialog.compone
 
       .search-field,
       .status-field,
+      .date-range-field,
       .reset-btn {
         width: 100%;
         min-width: 0;
@@ -733,6 +793,9 @@ export class DashboardComponent implements OnInit {
 
   searchImmat = '';
   filterRecupere: boolean | null = null;
+  dateDebut: Date | null = null;
+  dateFin: Date | null = null;
+  activePreset: 'today' | '7d' | '30d' | 'month' | 'year' | null = null;
 
   ngOnInit(): void {
     this.loadStats();
@@ -754,7 +817,9 @@ export class DashboardComponent implements OnInit {
       this.sortDir,
       {
         immatriculation: this.searchImmat || undefined,
-        recupere: this.filterRecupere ?? undefined
+        recupere: this.filterRecupere ?? undefined,
+        dateDebut: this.dateDebut ? this.toIsoStartOfDay(this.dateDebut) : undefined,
+        dateFin: this.dateFin ? this.toIsoEndOfDay(this.dateFin) : undefined
       }
     ).subscribe({
       next: (response) => {
@@ -766,6 +831,23 @@ export class DashboardComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  /** Format LocalDateTime ISO sans timezone — borne basse de la journée. */
+  private toIsoStartOfDay(d: Date): string {
+    return `${this.fmtYmd(d)}T00:00:00`;
+  }
+
+  /** Format LocalDateTime ISO sans timezone — borne haute de la journée. */
+  private toIsoEndOfDay(d: Date): string {
+    return `${this.fmtYmd(d)}T23:59:59`;
+  }
+
+  private fmtYmd(d: Date): string {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
   }
 
   onPage(event: PageEvent): void {
@@ -786,9 +868,65 @@ export class DashboardComponent implements OnInit {
     this.loadVehicules();
   }
 
+  /** Date range modifiée via le calendrier → on perd le preset actif et on relance */
+  onDateChange(): void {
+    this.activePreset = null;
+    // Ne lance la recherche que si la plage est complète (ou totalement vidée)
+    if (this.dateDebut && this.dateFin) {
+      this.applyFilter();
+    } else if (!this.dateDebut && !this.dateFin) {
+      this.applyFilter();
+    }
+  }
+
+  applyPreset(preset: 'today' | '7d' | '30d' | 'month' | 'year'): void {
+    // Toggle : reclick sur le preset actif désactive
+    if (this.activePreset === preset) {
+      this.activePreset = null;
+      this.dateDebut = null;
+      this.dateFin = null;
+      this.applyFilter();
+      return;
+    }
+
+    const now = new Date();
+    let start: Date;
+    const end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    switch (preset) {
+      case 'today':
+        start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        break;
+      case '7d':
+        start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
+        break;
+      case '30d':
+        start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 29);
+        break;
+      case 'month':
+        start = new Date(now.getFullYear(), now.getMonth(), 1);
+        break;
+      case 'year':
+        start = new Date(now.getFullYear(), 0, 1);
+        break;
+    }
+
+    this.activePreset = preset;
+    this.dateDebut = start;
+    this.dateFin = end;
+    this.applyFilter();
+  }
+
+  hasActiveFilter(): boolean {
+    return !!this.searchImmat || this.filterRecupere !== null || this.dateDebut !== null || this.dateFin !== null;
+  }
+
   resetFilters(): void {
     this.searchImmat = '';
     this.filterRecupere = null;
+    this.dateDebut = null;
+    this.dateFin = null;
+    this.activePreset = null;
     this.currentPage = 0;
     this.loadVehicules();
   }
