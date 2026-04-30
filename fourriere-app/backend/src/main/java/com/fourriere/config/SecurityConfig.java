@@ -62,11 +62,9 @@ public class SecurityConfig {
                         }
                         auth
                         .requestMatchers("/api/admin/utilisateurs/**").hasRole("SUPER_ADMIN")
-                        // Communes : lecture ouverte aux ADMIN (besoin du dropdown commune
-                        // dans le formulaire véhicule), écriture réservée au SUPER_ADMIN.
-                        .requestMatchers(HttpMethod.GET, "/api/admin/communes", "/api/admin/communes/**")
-                            .hasAnyRole("ADMIN", "SUPER_ADMIN")
-                        .requestMatchers("/api/admin/communes/**").hasRole("SUPER_ADMIN")
+                        // Communes : URL-level autorise ADMIN et SUPER_ADMIN ;
+                        // les écritures sont restreintes au SUPER_ADMIN via @PreAuthorize
+                        // sur AdminCommuneController (method-level security).
                         .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
                         .requestMatchers("/api/agent/**").hasAnyRole("AGENT_COMMUNE", "ADMIN", "SUPER_ADMIN")
                         .anyRequest().authenticated();
