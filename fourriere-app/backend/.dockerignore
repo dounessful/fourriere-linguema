@@ -1,0 +1,11 @@
+# Exclus du contexte de build Docker — on ne veut pas envoyer ces fichiers
+# au daemon, et surtout pas les écraser dans les stages.
+
+target
+.idea
+*.iml
+.vscode
+.git
+.gitignore
+HELP.md
+**/.DS_Store
